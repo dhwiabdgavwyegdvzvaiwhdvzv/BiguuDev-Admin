@@ -6,7 +6,7 @@
 const adminKey =
 new URLSearchParams(location.search).get("key");
 
-const API = "https://admin.biguudev.workers.dev";
+const API = "https://biguudev-admin-v2.biguudev.workers.dev";
 
 const app = document.getElementById("app");
 
