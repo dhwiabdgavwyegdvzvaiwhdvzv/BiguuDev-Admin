@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+  
+<meta charset="UTF-8">
+  
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>BiguuDev Admin</title>
+
+<link rel="stylesheet" href="style.css">
+  
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+
+BIGUUDEV
+
+</div>
+
+<div class="menu">
+
+<button id="btnDashboard" class="active">
+Dashboard
+</button>
+
+<button id="btnUsers">
+Users
+</button>
+
+<button id="btnAdd">
+Add User
+</button>
+
+<button id="btnStatistics">
+Statistics
+</button>
+
+<button id="btnSettings">
+Settings
+</button>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+
+<div class="title" id="pageTitle">
+
+Dashboard
+
+</div>
+
+<div>
+
+BiguuDev Admin
+
+</div>
+
+</div>
+
+<div class="content">
+
+    <div id="app">
+        Loading...
+    </div>
+
+</div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
