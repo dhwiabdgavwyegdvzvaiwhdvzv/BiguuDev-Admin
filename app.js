@@ -194,17 +194,122 @@ document
 
 function showAddUser(){
 
-title.textContent="Add User";
+title.textContent = "Add User";
 
 setActive("btnAdd");
 
-app.innerHTML=`
-<div class="empty">
-Coming Soon...
-</div>
-`;
+app.innerHTML = `
 
-}
+<div class="form-card">
+
+<h2>Create New User</h2>
+
+<div class="form-group">
+
+<label>Username</label>
+
+<input
+id="username"
+type="text"
+placeholder="Enter Username">
+
+</div>
+
+<div class="form-group">
+
+<label>Token</label>
+
+<input
+id="token"
+type="text"
+placeholder="Unique Token">
+
+</div>
+
+<div class="form-group">
+
+<label>Expire (Unix Timestamp)</label>
+
+<input
+id="expire"
+type="number"
+placeholder="1799999999">
+
+</div>
+
+<button
+class="btn btn-green"
+id="createUserBtn">
+
+Create User
+
+</button>
+
+<div
+id="createResult"
+style="margin-top:15px;">
+</div>
+
+</div>
+
+`;
+document.getElementById("createUserBtn").onclick = async () => {
+
+  const username = document.getElementById("username").value.trim();
+  const token = document.getElementById("token").value.trim();
+  const expire = Number(document.getElementById("expire").value);
+
+  const result = document.getElementById("createResult");
+
+  if (!username || !token || !expire) {
+    result.innerHTML =
+      "<span style='color:#ff6666'>Please fill all fields.</span>";
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      API + "/adduser?key=" + adminKey,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username,
+          token,
+          expire
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+
+      result.innerHTML =
+        "<span style='color:#66ff99'>✅ User Created Successfully</span>";
+
+      setTimeout(() => {
+        showUsers();
+      }, 800);
+
+    } else {
+
+      result.innerHTML =
+        "<span style='color:#ff6666'>" + data.message + "</span>";
+
+    }
+
+  } catch (err) {
+
+    result.innerHTML =
+      "<span style='color:#ff6666'>" + err.message + "</span>";
+
+  }
+
+};
 
 function showStatistics(){
 
