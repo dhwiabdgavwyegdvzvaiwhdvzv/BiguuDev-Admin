@@ -2532,3 +2532,205 @@ height:48px;
 }
 
 }
+/* =======================================================
+   BiguuDev Admin Panel v3
+   Part 7 - UI Polish
+======================================================= */
+
+/* ==========================
+   TOPBAR
+========================== */
+
+.topbar{
+    height:64px !important;
+    padding:0 18px !important;
+}
+
+.title{
+    font-size:26px !important;
+    font-weight:700;
+}
+
+.topbar>div:last-child{
+    font-size:16px;
+    opacity:.9;
+}
+
+/* ==========================
+   MOBILE MENU BUTTON
+========================== */
+
+.mobile-menu{
+    width:44px !important;
+    height:44px !important;
+    border-radius:14px !important;
+    font-size:20px !important;
+}
+
+/* ==========================
+   CONTENT
+========================== */
+
+.content{
+    padding:18px !important;
+}
+
+/* ==========================
+   CARDS
+========================== */
+
+.card{
+    padding:22px !important;
+    border-radius:20px !important;
+}
+
+.card-title{
+    font-size:12px !important;
+    letter-spacing:2px;
+}
+
+.card-value{
+    font-size:38px !important;
+}
+
+/* Dashboard stat cards */
+.cards .card{
+    min-height:150px;
+}
+
+/* ==========================
+   FORM CARD
+========================== */
+
+.form-card{
+    max-width:720px;
+    margin:auto;
+    padding:24px !important;
+}
+
+.form-card h2{
+    font-size:24px;
+    margin-bottom:22px;
+}
+
+/* ==========================
+   INPUTS
+========================== */
+
+.form-group input,
+.form-group select,
+.search-box{
+    height:50px !important;
+    border-radius:16px !important;
+    font-size:15px;
+}
+
+/* ==========================
+   BUTTONS
+========================== */
+
+.btn{
+    height:48px !important;
+    border-radius:16px !important;
+}
+
+.btn-gold{
+    box-shadow:
+    0 8px 25px rgba(157,77,255,.22);
+}
+
+/* ==========================
+   TABLE
+========================== */
+
+th{
+    font-size:12px !important;
+}
+
+td{
+    font-size:14px !important;
+    padding:16px !important;
+}
+
+.badge{
+    padding:6px 14px !important;
+    font-size:12px !important;
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media(max-width:768px){
+
+.topbar{
+    height:60px !important;
+    padding:0 12px !important;
+}
+
+.title{
+    font-size:18px !important;
+}
+
+.topbar>div:last-child{
+    font-size:14px;
+}
+
+.content{
+    padding:14px !important;
+}
+
+.card{
+    padding:18px !important;
+}
+
+.cards .card{
+    min-height:130px;
+}
+
+.card-value{
+    font-size:32px !important;
+}
+
+.form-card{
+    padding:18px !important;
+}
+
+.search-box{
+    height:46px !important;
+}
+
+.btn{
+    height:46px !important;
+}
+
+.table-container{
+    border-radius:18px;
+}
+
+}
+
+/* ==========================
+   SMALL PHONE
+========================== */
+
+@media(max-width:430px){
+
+.title{
+    font-size:16px !important;
+}
+
+.mobile-menu{
+    width:40px !important;
+    height:40px !important;
+}
+
+.logo{
+    font-size:22px;
+}
+
+.card-value{
+    font-size:28px !important;
+}
+
+}
