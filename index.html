@@ -1,470 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-
+  
 <head>
-
+  
 <meta charset="UTF-8">
+  
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title> </title>
 
-<meta name="theme-color"
-content="#08090D">
-
-<title>BiguuDev Admin Panel</title>
-
-<link rel="preconnect"
-href="https://fonts.googleapis.com">
-
-<link rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-rel="stylesheet">
-
-<link rel="stylesheet"
-href="style.css">
-
+<link rel="stylesheet" href="style.css">
+  
 </head>
 
 <body>
 
-<div class="app-shell">
+<div class="sidebar">
 
-    <!-- ========================= -->
-    <!-- Sidebar -->
-    <!-- ========================= -->
+<div class="logo">
 
-    <aside class="sidebar">
-
-        <div class="sidebar-top">
-
-            <div class="brand">
-
-                <div class="brand-logo">
-
-                    B
-
-                </div>
-
-                <div class="brand-text">
-
-                    <h2>
-
-                        BIGUUDEV
-
-                    </h2>
-
-                    <span>
-
-                        Admin Panel
-
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- ========================= -->
-        <!-- Navigation -->
-        <!-- ========================= -->
-
-        <nav class="sidebar-nav">
-
-            <button
-            id="btnDashboard"
-            class="nav-item active">
-
-                <span class="nav-icon">
-
-                    🏠
-
-                </span>
-
-                <span>
-
-                    Dashboard
-
-                </span>
-
-            </button>
-
-            <button
-            id="btnUsers"
-            class="nav-item">
-
-                <span class="nav-icon">
-
-                    👥
-
-                </span>
-
-                <span>
-
-                    Users
-
-                </span>
-
-            </button>
-
-            <button
-            id="btnAdd"
-            class="nav-item">
-
-                <span class="nav-icon">
-
-                    ➕
-
-                </span>
-
-                <span>
-
-                    Add User
-
-                </span>
-
-            </button>
-
-            <button
-            id="btnStatistics"
-            class="nav-item">
-
-                <span class="nav-icon">
-
-                    📊
-
-                </span>
-
-                <span>
-
-                    Statistics
-
-                </span>
-
-            </button>
-
-            <button
-            id="btnSettings"
-            class="nav-item">
-
-                <span class="nav-icon">
-
-                    ⚙️
-
-                </span>
-
-                <span>
-
-                    Settings
-
-                </span>
-
-            </button>
-
-        </nav>
-
-        <!-- ========================= -->
-        <!-- Sidebar Footer -->
-        <!-- ========================= -->
-
-        <div class="sidebar-footer">
-
-            <div class="version-card">
-
-                <small>
-
-                    BiguuDev Admin
-
-                </small>
-
-                <strong>
-
-                    Version 3.0
-
-                </strong>
-
-            </div>
-
-        </div>
-
-    </aside>
-
-    <!-- ========================= -->
-    <!-- Main -->
-    <!-- ========================= -->
-
-    <main class="main-layout">
-        <!-- ========================= -->
-        <!-- Top Navigation -->
-        <!-- ========================= -->
-
-        <header class="topbar">
-
-            <div class="topbar-left">
-
-                <button
-                    id="mobileMenu"
-                    class="mobile-menu"
-                    aria-label="Open Menu">
-
-                    ☰
-
-                </button>
-
-                <div class="page-header">
-
-                    <h1 id="pageTitle">
-
-                        Dashboard
-
-                    </h1>
-
-                    <span>
-
-                        Welcome back, BiguuDev
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div class="topbar-center">
-
-                <div class="search-wrapper">
-
-                    <svg class="search-icon"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2">
-
-                        <circle
-                            cx="11"
-                            cy="11"
-                            r="7"></circle>
-
-                        <line
-                            x1="21"
-                            y1="21"
-                            x2="16.65"
-                            y2="16.65"></line>
-
-                    </svg>
-
-                    <input
-
-                        id="globalSearch"
-
-                        type="search"
-
-                        placeholder="Search users..."
-
-                        autocomplete="off"
-
-                    >
-
-                </div>
-
-            </div>
-
-            <div class="topbar-right">
-
-                <button
-
-                    id="btnRefresh"
-
-                    class="circle-btn"
-
-                    title="Refresh"
-
-                >
-
-                    ↻
-
-                </button>
-
-                <button
-
-                    id="btnNotification"
-
-                    class="circle-btn notification-btn"
-
-                    title="Notifications"
-
-                >
-
-                    🔔
-
-                    <span class="notification-dot"></span>
-
-                </button>
-
-                <button
-
-                    id="btnTheme"
-
-                    class="circle-btn"
-
-                    title="Theme"
-
-                >
-
-                    🌙
-
-                </button>
-
-                <div class="profile-box">
-
-                    <div class="avatar">
-
-                        B
-
-                    </div>
-
-                    <div class="profile-text">
-
-                        <strong>
-
-                            BiguuDev
-
-                        </strong>
-
-                        <small>
-
-                            Administrator
-
-                        </small>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </header>
-
-                <!-- ========================= -->
-        <!-- Content -->
-        <!-- ========================= -->
-
-        <section class="content">
-
-            <div
-                id="app"
-                class="page-content">
-
-                <div class="loader"></div>
-
-            </div>
-
-        </section>
-
-    </main>
+BIGUUDEV
 
 </div>
 
-<!-- ========================= -->
-<!-- Sidebar Overlay -->
-<!-- ========================= -->
+<div class="menu">
 
-<div
-    id="sidebarOverlay"
-    class="sidebar-overlay">
-</div>
-
-<!-- ========================= -->
-<!-- Loading Screen -->
-<!-- ========================= -->
-
-<div
-    id="loadingScreen"
-    class="loading-screen">
-
-    <div class="loading-box">
-
-        <div class="loader"></div>
-
-        <h3>
-            BiguuDev Admin
-        </h3>
-
-        <p>
-            Loading dashboard...
-        </p>
-
-    </div>
-
-</div>
-
-<!-- ========================= -->
-<!-- Toast Notifications -->
-<!-- ========================= -->
-
-<div
-    id="toastContainer"
-    class="toast-container">
-</div>
-
-<!-- ========================= -->
-<!-- Modal -->
-<!-- ========================= -->
-
-<div
-    id="modal"
-    class="modal">
-
-    <div class="modal-overlay"></div>
-
-    <div class="modal-box">
-
-        <div class="modal-header">
-
-            <h2 id="modalTitle">
-                Information
-            </h2>
-
-            <button
-                id="closeModal"
-                class="modal-close">
-
-                ✕
-
-            </button>
-
-        </div>
-
-        <div
-            id="modalBody"
-            class="modal-body">
-        </div>
-
-        <div
-            id="modalFooter"
-            class="modal-footer">
-        </div>
-
-    </div>
-
-</div>
-
-<!-- ========================= -->
-<!-- Floating Action Button -->
-<!-- ========================= -->
-
-<button
-    id="fabButton"
-    class="fab"
-    title="Quick Add">
-
-    +
-
+<button id="btnDashboard" class="active">
+Dashboard
 </button>
+
+<button id="btnUsers">
+Users
+</button>
+
+<button id="btnAdd">
+Add User
+</button>
+
+<button id="btnStatistics">
+Statistics
+</button>
+
+<button id="btnSettings">
+Settings
+</button>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+  
+<button class="mobile-menu" id="mobileMenu">
+☰
+</button>
+  
+<div class="title" id="pageTitle">
+
+Dashboard
+
+</div>
+
+<div>
+
+BiguuDev Admin
+
+</div>
+
+</div>
+
+<div class="content">
+
+    <div id="app">
+        Loading...
+    </div>
+
+</div>
+
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <script src="app.js"></script>
 
