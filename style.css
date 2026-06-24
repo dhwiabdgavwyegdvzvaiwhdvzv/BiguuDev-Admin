@@ -772,3 +772,18 @@ input[type="number"]::-webkit-outer-spin-button { opacity: 0.3; }
     gap: 12px;
   }
 }
+/* ===== Custom Background ===== */
+
+body{
+    background:
+    linear-gradient(
+        rgba(8,9,13,0.78),
+        rgba(8,9,13,0.88)
+    ),
+    url("https://i.pinimg.com/1200x/a3/77/e7/a377e72baa61605a7827e68584e73363.jpg") !important;
+
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+}
