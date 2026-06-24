@@ -1923,3 +1923,610 @@ repeat(4,1fr);
    BiguuDev Admin Panel v3
    Premium UI Completed
 =======================================================*/
+/* =======================================================
+   BiguuDev Admin Panel v3
+   Part 5 - Responsive Foundation
+======================================================= */
+
+/* -------------------------------
+   Global Scroll Fix
+-------------------------------- */
+
+html,
+body{
+
+height:100%;
+
+overflow-x:hidden;
+
+overflow-y:auto;
+
+}
+
+body{
+
+min-height:100vh;
+
+}
+
+/* -------------------------------
+   Layout
+-------------------------------- */
+
+.main{
+
+min-width:0;
+
+min-height:100vh;
+
+overflow:hidden;
+
+}
+
+.content{
+
+flex:1;
+
+overflow-y:auto;
+
+overflow-x:hidden;
+
+padding:28px;
+
+}
+
+/* -------------------------------
+   Topbar
+-------------------------------- */
+
+.topbar{
+
+position:sticky;
+
+top:0;
+
+z-index:100;
+
+}
+
+/* -------------------------------
+   Toolbar
+-------------------------------- */
+
+.toolbar{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:18px;
+
+flex-wrap:wrap;
+
+}
+
+/* -------------------------------
+   Search
+-------------------------------- */
+
+.search-box{
+
+flex:1;
+
+max-width:420px;
+
+min-width:220px;
+
+}
+
+/* -------------------------------
+   Buttons
+-------------------------------- */
+
+.actions{
+
+display:flex;
+
+gap:8px;
+
+flex-wrap:wrap;
+
+}
+
+/* -------------------------------
+   Table
+-------------------------------- */
+
+.table-container{
+
+width:100%;
+
+overflow-x:auto;
+
+overflow-y:hidden;
+
+-webkit-overflow-scrolling:touch;
+
+}
+
+.table-container table{
+
+min-width:760px;
+
+}
+
+/* -------------------------------
+   Cards
+-------------------------------- */
+
+.cards{
+
+align-items:stretch;
+
+}
+
+/* -------------------------------
+   Forms
+-------------------------------- */
+
+.form{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:22px;
+
+}
+
+.form-full{
+
+grid-column:1/-1;
+
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media(max-width:992px){
+
+.sidebar{
+
+width:230px;
+
+}
+
+.content{
+
+padding:22px;
+
+}
+
+.cards{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:768px){
+
+body{
+
+overflow-y:auto;
+
+}
+
+/* Sidebar (prepare for slide menu) */
+
+.sidebar{
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+bottom:0;
+
+width:270px;
+
+transform:translateX(-100%);
+
+transition:.35s ease;
+
+z-index:1000;
+
+}
+
+/* This class will be used later by JS */
+
+.sidebar.open{
+
+transform:translateX(0);
+
+}
+
+.main{
+
+width:100%;
+
+margin-left:0;
+
+}
+
+.topbar{
+
+padding:0 16px;
+
+height:64px;
+
+}
+
+.content{
+
+padding:16px;
+
+}
+
+/* Cards */
+
+.cards{
+
+grid-template-columns:1fr;
+
+gap:16px;
+
+}
+
+/* Toolbar */
+
+.toolbar{
+
+flex-direction:column;
+
+align-items:stretch;
+
+}
+
+.search-box{
+
+width:100%;
+
+max-width:100%;
+
+}
+
+/* Forms */
+
+.form{
+
+grid-template-columns:1fr;
+
+}
+
+/* Buttons */
+
+.btn{
+
+width:100%;
+
+}
+
+/* Actions */
+
+.actions{
+
+flex-direction:column;
+
+}
+
+/* Table */
+
+.table-container{
+
+border-radius:18px;
+
+}
+
+}
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media(max-width:480px){
+
+.logo{
+
+font-size:22px;
+
+}
+
+.title{
+
+font-size:22px;
+
+}
+
+.content{
+
+padding:14px;
+
+}
+
+.card{
+
+padding:18px;
+
+}
+
+.card-value{
+
+font-size:30px;
+
+}
+
+}
+/* =======================================================
+   BiguuDev Admin Panel v3
+   Part 6 - Mobile Navigation
+======================================================= */
+
+/* ==========================
+   MOBILE MENU BUTTON
+========================== */
+
+.mobile-menu{
+
+display:none;
+
+width:46px;
+
+height:46px;
+
+border-radius:14px;
+
+background:rgba(255,255,255,.05);
+
+border:1px solid var(--border);
+
+color:#fff;
+
+cursor:pointer;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:22px;
+
+transition:var(--transition);
+
+backdrop-filter:blur(20px);
+
+}
+
+.mobile-menu:hover{
+
+background:rgba(157,77,255,.18);
+
+border-color:var(--purple);
+
+transform:scale(1.05);
+
+}
+
+/* ==========================
+   OVERLAY
+========================== */
+
+.sidebar-overlay{
+
+position:fixed;
+
+inset:0;
+
+background:rgba(0,0,0,.55);
+
+backdrop-filter:blur(5px);
+
+opacity:0;
+
+visibility:hidden;
+
+transition:.3s;
+
+z-index:998;
+
+}
+
+.sidebar-overlay.show{
+
+opacity:1;
+
+visibility:visible;
+
+}
+
+/* ==========================
+   SIDEBAR HEADER
+========================== */
+
+.sidebar{
+
+overflow-y:auto;
+
+overflow-x:hidden;
+
+}
+
+.sidebar::-webkit-scrollbar{
+
+width:6px;
+
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+
+background:rgba(255,255,255,.12);
+
+border-radius:20px;
+
+}
+
+/* ==========================
+   MENU
+========================== */
+
+.menu{
+
+padding-bottom:30px;
+
+}
+
+.menu button{
+
+display:flex;
+
+align-items:center;
+
+gap:14px;
+
+}
+
+/* ==========================
+   TOPBAR
+========================== */
+
+.topbar{
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+gap:15px;
+
+}
+
+.topbar-left{
+
+display:flex;
+
+align-items:center;
+
+gap:16px;
+
+}
+
+.topbar-right{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media(max-width:768px){
+
+.mobile-menu{
+
+display:flex;
+
+}
+
+.sidebar{
+
+left:0;
+
+top:0;
+
+bottom:0;
+
+height:100vh;
+
+box-shadow:
+
+25px 0 60px rgba(0,0,0,.45);
+
+}
+
+.sidebar.open{
+
+transform:translateX(0);
+
+}
+
+.title{
+
+font-size:22px;
+
+}
+
+.topbar{
+
+height:68px;
+
+}
+
+}
+
+/* ==========================
+   SMALL PHONE
+========================== */
+
+@media(max-width:480px){
+
+.sidebar{
+
+width:250px;
+
+}
+
+.card{
+
+border-radius:18px;
+
+}
+
+.btn{
+
+height:46px;
+
+font-size:13px;
+
+}
+
+.search-box{
+
+height:48px;
+
+font-size:14px;
+
+}
+
+.form-group input,
+
+.form-group select{
+
+height:48px;
+
+}
+
+}
