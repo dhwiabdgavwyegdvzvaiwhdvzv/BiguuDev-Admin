@@ -2728,7 +2728,52 @@ console.log(
 "Loaded Successfully."
 
 );
+// =====================================
+// Mobile Sidebar
+// =====================================
 
-// =====================================
-// END OF APP.JS
-// =====================================
+const mobileMenu = document.getElementById("mobileMenu");
+const sidebar = document.querySelector(".sidebar");
+const overlay = document.getElementById("sidebarOverlay");
+
+function openSidebar() {
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+    document.body.style.overflow = "hidden";
+}
+
+function closeSidebar() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+    document.body.style.overflow = "";
+}
+
+if (mobileMenu) {
+    mobileMenu.addEventListener("click", () => {
+        if (sidebar.classList.contains("open")) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+}
+
+if (overlay) {
+    overlay.addEventListener("click", closeSidebar);
+}
+
+// Close sidebar after selecting a menu item (mobile only)
+document.querySelectorAll(".menu button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+            closeSidebar();
+        }
+    });
+});
+
+// Auto close when screen becomes desktop size
+window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) {
+        closeSidebar();
+    }
+});
