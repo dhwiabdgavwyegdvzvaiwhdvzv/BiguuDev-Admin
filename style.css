@@ -787,9 +787,12 @@ body{
     background-repeat: no-repeat !important;
     background-attachment: fixed !important;
 }
-/* ===== iPhone Safari White Bar Fix ===== */
+/* ===== Safari Safe Area Fix ===== */
 
 html,
 body{
-    background: #08090D !important;
+    margin:0 !important;
+    padding:0 !important;
+    background:#08090D !important;
+    min-height:100% !important;
 }
