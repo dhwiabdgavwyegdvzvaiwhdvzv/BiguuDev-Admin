@@ -1,53 +1,55 @@
-/* =======================================================
-   BiguuDev Admin Panel v3 Premium UI
-   Part 1
-======================================================= */
+/* ==========================================================
+   BIGUUDEV ADMIN UI V4
+   PART 1
+   Foundation
+========================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root{
 
---bg:#05060B;
+--bg:#05060A;
 
---bg2:#0B0D16;
+--bg2:#090B12;
 
---sidebar:#070912;
+--panel:#0E1118;
 
---card:rgba(255,255,255,.04);
+--panel2:#131722;
 
---glass:rgba(255,255,255,.05);
+--glass:rgba(255,255,255,.04);
 
 --border:rgba(255,255,255,.08);
 
---border-hover:rgba(157,77,255,.45);
+--border2:rgba(255,255,255,.14);
 
---text:#ffffff;
+--text:#F4F7FB;
 
---muted:#98A2B3;
+--muted:#8C95A8;
 
---purple:#9d4dff;
+--purple:#9D4DFF;
 
---pink:#ff4df1;
+--pink:#FF4FD8;
 
---cyan:#4df1ff;
+--cyan:#36D7FF;
 
---green:#2EF2A0;
+--green:#22D37E;
 
---red:#ff4b67;
+--orange:#FF9F43;
 
---yellow:#FFC857;
+--red:#FF4E5F;
 
 --radius:22px;
 
 --shadow:
+0 10px 40px rgba(0,0,0,.45);
 
-0 15px 60px rgba(0,0,0,.45);
-
---transition:.28s cubic-bezier(.2,.8,.2,1);
+--transition:.28s cubic-bezier(.4,0,.2,1);
 
 }
 
-/* ===================================================== */
+/* ==========================================================
+RESET
+========================================================== */
 
 *{
 
@@ -56,8 +58,6 @@ margin:0;
 padding:0;
 
 box-sizing:border-box;
-
-font-family:"Space Grotesk",sans-serif;
 
 }
 
@@ -69,29 +69,21 @@ scroll-behavior:smooth;
 
 body{
 
-background:
+font-family:'Inter',sans-serif;
 
-radial-gradient(circle at top left,
-
-rgba(157,77,255,.18),
-
-transparent 28%),
-
-radial-gradient(circle at top right,
-
-rgba(77,241,255,.08),
-
-transparent 30%),
-
-var(--bg);
+background:var(--bg);
 
 color:var(--text);
 
-overflow:hidden;
+min-height:100vh;
+
+overflow-x:hidden;
 
 }
 
-/* ===================================================== */
+/* ==========================================================
+BACKGROUND
+========================================================== */
 
 body::before{
 
@@ -101,217 +93,195 @@ position:fixed;
 
 inset:0;
 
+pointer-events:none;
+
 background:
 
-linear-gradient(
+radial-gradient(circle at top left,
+rgba(157,77,255,.16),
+transparent 28%),
 
-180deg,
+radial-gradient(circle at top right,
+rgba(54,215,255,.12),
+transparent 25%),
 
-transparent,
+radial-gradient(circle at bottom left,
+rgba(255,79,216,.08),
+transparent 30%),
 
-rgba(255,255,255,.015)
+linear-gradient(180deg,
+#05060A,
+#070A11);
 
-);
+z-index:-3;
+
+}
+
+/* grid */
+
+body::after{
+
+content:"";
+
+position:fixed;
+
+inset:0;
 
 pointer-events:none;
 
-z-index:-1;
+background-image:
+
+linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+
+linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+
+background-size:48px 48px;
+
+opacity:.35;
+
+z-index:-2;
 
 }
 
-/* ===================================================== */
+/* ==========================================================
+SCROLLBAR
+========================================================== */
 
-.sidebar{
+::-webkit-scrollbar{
 
-width:270px;
+width:10px;
 
-background:
+height:10px;
 
-linear-gradient(
+}
+
+::-webkit-scrollbar-track{
+
+background:#06070C;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:linear-gradient(
 
 180deg,
 
-#080A13,
-
-#06070E
-
-);
-
-border-right:1px solid var(--border);
-
-backdrop-filter:blur(20px);
-
-display:flex;
-
-flex-direction:column;
-
-padding:24px;
-
-transition:var(--transition);
-
-box-shadow:
-
-20px 0 80px rgba(0,0,0,.25);
-
-}
-
-/* ===================================================== */
-
-.logo{
-
-font-size:28px;
-
-font-weight:700;
-
-letter-spacing:1px;
-
-background:
-
-linear-gradient(
-
-90deg,
-
 var(--purple),
-
-var(--pink),
 
 var(--cyan)
 
 );
 
--webkit-background-clip:text;
-
--webkit-text-fill-color:transparent;
-
-margin-bottom:45px;
+border-radius:30px;
 
 }
 
-/* ===================================================== */
+::-webkit-scrollbar-thumb:hover{
 
-.menu{
-
-display:flex;
-
-flex-direction:column;
-
-gap:12px;
+filter:brightness(1.1);
 
 }
 
-/* ===================================================== */
+/* ==========================================================
+TYPOGRAPHY
+========================================================== */
 
-.menu button{
+h1{
 
-height:52px;
+font-size:38px;
 
-border:none;
+font-weight:800;
 
-border-radius:18px;
+letter-spacing:-1px;
 
-background:transparent;
+}
+
+h2{
+
+font-size:28px;
+
+font-weight:700;
+
+}
+
+h3{
+
+font-size:22px;
+
+font-weight:700;
+
+}
+
+p{
 
 color:var(--muted);
 
+line-height:1.7;
+
+}
+
+a{
+
+color:inherit;
+
+text-decoration:none;
+
+}
+
+/* ==========================================================
+GLOBAL
+========================================================== */
+
+button{
+
+font-family:inherit;
+
+border:none;
+
+outline:none;
+
 cursor:pointer;
-
-font-size:15px;
-
-font-weight:600;
-
-text-align:left;
-
-padding:0 18px;
 
 transition:var(--transition);
 
-position:relative;
+}
 
-overflow:hidden;
+input,
+
+select,
+
+textarea{
+
+font-family:inherit;
+
+outline:none;
 
 }
 
-/* ===================================================== */
+img{
 
-.menu button::before{
+display:block;
 
-content:"";
-
-position:absolute;
-
-left:-100%;
-
-top:0;
-
-width:100%;
-
-height:100%;
-
-background:
-
-linear-gradient(
-
-90deg,
-
-transparent,
-
-rgba(255,255,255,.08),
-
-transparent
-
-);
-
-transition:.8s;
+max-width:100%;
 
 }
 
-/* ===================================================== */
+.hidden{
 
-.menu button:hover::before{
-
-left:100%;
+display:none!important;
 
 }
 
-/* ===================================================== */
+/* ==========================================================
+APP LAYOUT
+========================================================== */
 
-.menu button:hover{
+body{
 
-background:var(--glass);
-
-color:white;
-
-transform:translateX(6px);
+display:flex;
 
 }
-
-/* ===================================================== */
-
-.menu button.active{
-
-background:
-
-linear-gradient(
-
-135deg,
-
-rgba(157,77,255,.18),
-
-rgba(77,241,255,.08)
-
-);
-
-border:1px solid var(--border-hover);
-
-color:white;
-
-box-shadow:
-
-0 0 25px rgba(157,77,255,.18);
-
-}
-
-/* ===================================================== */
 
 .main{
 
@@ -321,95 +291,242 @@ display:flex;
 
 flex-direction:column;
 
-overflow:hidden;
+min-width:0;
+
+min-height:100vh;
 
 }
-
-/* ===================================================== */
-
-.topbar{
-
-height:78px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:space-between;
-
-padding:0 34px;
-
-background:
-
-rgba(255,255,255,.03);
-
-backdrop-filter:blur(22px);
-
-border-bottom:1px solid var(--border);
-
-}
-
-/* ===================================================== */
-
-.title{
-
-font-size:30px;
-
-font-weight:700;
-
-letter-spacing:.5px;
-
-}
-
-/* ===================================================== */
 
 .content{
 
 flex:1;
 
-overflow:auto;
-
-padding:34px;
-
-animation:fadePage .45s ease;
+padding:32px;
 
 }
 
-/* ===================================================== */
+/* ==========================================================
+GLASS EFFECT
+========================================================== */
 
-@keyframes fadePage{
+.glass{
 
-from{
+background:
 
-opacity:0;
+linear-gradient(
 
-transform:
+180deg,
 
-translateY(15px);
+rgba(255,255,255,.04),
 
-}
+rgba(255,255,255,.02)
 
-to{
+);
 
-opacity:1;
+backdrop-filter:blur(24px);
 
-transform:
+-webkit-backdrop-filter:blur(24px);
 
-translateY(0);
+border:1px solid var(--border);
 
-}
+border-radius:var(--radius);
 
-}
-
-/* ===================================================== */
-
-.content::-webkit-scrollbar{
-
-width:9px;
+box-shadow:var(--shadow);
 
 }
 
-.content::-webkit-scrollbar-thumb{
+/* ==========================================================
+SELECTION
+========================================================== */
+
+::selection{
+
+background:var(--purple);
+
+color:white;
+
+}
+/* ==========================================================
+   BIGUUDEV ADMIN UI V4
+   PART 2
+   Sidebar + Topbar
+========================================================== */
+
+/* ==========================================================
+SIDEBAR
+========================================================== */
+
+.sidebar{
+
+width:250px;
+
+background:
+
+linear-gradient(
+
+180deg,
+
+rgba(17,20,31,.95),
+
+rgba(10,12,20,.98)
+
+);
+
+backdrop-filter:blur(28px);
+
+-webkit-backdrop-filter:blur(28px);
+
+border-right:1px solid var(--border);
+
+display:flex;
+
+flex-direction:column;
+
+padding:20px;
+
+position:sticky;
+
+top:0;
+
+height:100vh;
+
+transition:.35s;
+
+z-index:1000;
+
+}
+
+/* ---------------------------------------------------------- */
+
+.logo{
+
+height:60px;
+
+display:flex;
+
+align-items:center;
+
+font-size:28px;
+
+font-weight:800;
+
+letter-spacing:-1px;
+
+margin-bottom:35px;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+#fff,
+
+var(--cyan),
+
+var(--purple)
+
+);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+}
+
+/* ---------------------------------------------------------- */
+
+.menu{
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+}
+
+/* ---------------------------------------------------------- */
+
+.menu button{
+
+height:52px;
+
+display:flex;
+
+align-items:center;
+
+padding:0 18px;
+
+border-radius:16px;
+
+background:transparent;
+
+color:var(--muted);
+
+font-size:15px;
+
+font-weight:600;
+
+transition:var(--transition);
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+/* hover */
+
+.menu button:hover{
+
+background:rgba(255,255,255,.04);
+
+color:#fff;
+
+transform:translateX(4px);
+
+}
+
+/* active */
+
+.menu button.active{
+
+background:
+
+linear-gradient(
+
+90deg,
+
+rgba(157,77,255,.18),
+
+rgba(54,215,255,.10)
+
+);
+
+color:#fff;
+
+border:1px solid rgba(157,77,255,.25);
+
+}
+
+/* active glow */
+
+.menu button.active::before{
+
+content:"";
+
+position:absolute;
+
+left:0;
+
+top:10px;
+
+bottom:10px;
+
+width:4px;
+
+border-radius:999px;
 
 background:
 
@@ -419,49 +536,248 @@ linear-gradient(
 
 var(--purple),
 
-var(--pink)
+var(--cyan)
 
 );
 
-border-radius:20px;
+}
+
+/* ==========================================================
+TOPBAR
+========================================================== */
+
+.topbar{
+
+height:70px;
+
+padding:0 28px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:space-between;
+
+background:
+
+rgba(16,19,30,.75);
+
+backdrop-filter:blur(24px);
+
+-webkit-backdrop-filter:blur(24px);
+
+border-bottom:1px solid var(--border);
+
+position:sticky;
+
+top:0;
+
+z-index:500;
 
 }
 
-.content::-webkit-scrollbar-track{
+/* ---------------------------------------------------------- */
 
-background:transparent;
+.topbar-left{
+
+display:flex;
+
+align-items:center;
+
+gap:16px;
 
 }
-/* =======================================================
-   BiguuDev Admin Panel v3 Premium UI
-   Part 2 - Dashboard & Cards
-======================================================= */
 
-/* ==========================
-   DASHBOARD GRID
-========================== */
+.topbar-right{
+
+display:flex;
+
+align-items:center;
+
+gap:14px;
+
+}
+
+/* ---------------------------------------------------------- */
+
+.title{
+
+font-size:28px;
+
+font-weight:700;
+
+letter-spacing:-.5px;
+
+}
+
+/* ==========================================================
+MOBILE BUTTON
+========================================================== */
+
+.mobile-menu{
+
+display:none;
+
+width:44px;
+
+height:44px;
+
+border-radius:14px;
+
+background:
+
+rgba(255,255,255,.04);
+
+border:1px solid var(--border);
+
+color:#fff;
+
+font-size:20px;
+
+align-items:center;
+
+justify-content:center;
+
+transition:var(--transition);
+
+}
+
+.mobile-menu:hover{
+
+background:
+
+rgba(157,77,255,.16);
+
+border-color:
+
+rgba(157,77,255,.35);
+
+}
+
+/* ==========================================================
+OVERLAY
+========================================================== */
+
+.sidebar-overlay{
+
+position:fixed;
+
+inset:0;
+
+background:
+
+rgba(0,0,0,.55);
+
+backdrop-filter:blur(6px);
+
+opacity:0;
+
+visibility:hidden;
+
+transition:.3s;
+
+z-index:900;
+
+}
+
+.sidebar-overlay.show{
+
+opacity:1;
+
+visibility:visible;
+
+}
+
+/* ==========================================================
+RESPONSIVE
+========================================================== */
+
+@media(max-width:768px){
+
+.mobile-menu{
+
+display:flex;
+
+}
+
+.sidebar{
+
+position:fixed;
+
+left:0;
+
+top:0;
+
+bottom:0;
+
+width:260px;
+
+transform:translateX(-100%);
+
+box-shadow:
+
+0 20px 60px rgba(0,0,0,.45);
+
+}
+
+.sidebar.open{
+
+transform:translateX(0);
+
+}
+
+.topbar{
+
+padding:0 16px;
+
+height:64px;
+
+}
+
+.title{
+
+font-size:22px;
+
+}
+
+.content{
+
+padding:18px;
+
+}
+
+}
+/* ==========================================================
+   BIGUUDEV ADMIN UI V4
+   PART 3A
+   Dashboard Cards
+========================================================== */
+
+/* DASHBOARD GRID */
 
 .cards{
 
 display:grid;
 
-grid-template-columns:
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
 
-repeat(auto-fit,minmax(260px,1fr));
+gap:22px;
 
-gap:24px;
-
-margin-bottom:30px;
+margin-bottom:28px;
 
 }
 
-/* ========================== */
+/* ------------------------------------------------ */
 
 .card{
 
 position:relative;
 
-background:linear-gradient(
+overflow:hidden;
+
+background:
+
+linear-gradient(
 
 180deg,
 
@@ -475,21 +791,21 @@ border:1px solid var(--border);
 
 border-radius:24px;
 
-padding:26px;
+padding:24px;
 
-overflow:hidden;
+transition:all .3s ease;
 
-backdrop-filter:blur(22px);
+backdrop-filter:blur(24px);
 
-transition:var(--transition);
+-webkit-backdrop-filter:blur(24px);
 
-box-shadow:var(--shadow);
+box-shadow:
 
-animation:cardFade .45s ease;
+0 10px 40px rgba(0,0,0,.28);
 
 }
 
-/* ========================== */
+/* glow */
 
 .card::before{
 
@@ -513,9 +829,9 @@ radial-gradient(
 
 circle,
 
-rgba(157,77,255,.22),
+rgba(157,77,255,.18),
 
-transparent 70%
+transparent 72%
 
 );
 
@@ -523,17 +839,15 @@ pointer-events:none;
 
 }
 
-/* ========================== */
-
 .card::after{
 
 content:"";
 
 position:absolute;
 
-width:120px;
+width:140px;
 
-height:120px;
+height:140px;
 
 left:-60px;
 
@@ -547,9 +861,9 @@ radial-gradient(
 
 circle,
 
-rgba(77,241,255,.15),
+rgba(54,215,255,.12),
 
-transparent 70%
+transparent 72%
 
 );
 
@@ -557,95 +871,61 @@ pointer-events:none;
 
 }
 
-/* ========================== */
+/* hover */
 
 .card:hover{
 
 transform:
 
-translateY(-8px)
-
-scale(1.02);
+translateY(-8px);
 
 border-color:
 
-var(--border-hover);
+rgba(157,77,255,.28);
 
 box-shadow:
 
-0 20px 60px
+0 20px 60px rgba(0,0,0,.45),
 
-rgba(157,77,255,.20);
+0 0 40px rgba(157,77,255,.14);
 
 }
 
-/* ========================== */
+/* ------------------------------------------------ */
+
+.card-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:22px;
+
+}
 
 .card-title{
 
 font-size:13px;
 
-letter-spacing:2px;
+font-weight:600;
+
+letter-spacing:1.5px;
 
 text-transform:uppercase;
 
 color:var(--muted);
 
-margin-bottom:18px;
-
-font-weight:600;
-
 }
-
-/* ========================== */
-
-.card-value{
-
-font-size:42px;
-
-font-weight:700;
-
-background:
-
-linear-gradient(
-
-90deg,
-
-#fff,
-
-var(--cyan)
-
-);
-
--webkit-background-clip:text;
-
--webkit-text-fill-color:transparent;
-
-margin-bottom:8px;
-
-}
-
-/* ========================== */
-
-.card-subtitle{
-
-font-size:13px;
-
-color:var(--muted);
-
-}
-
-/* ==========================
-   MINI CARD ICON
-========================== */
 
 .card-icon{
 
-width:54px;
+width:52px;
 
-height:54px;
+height:52px;
 
-border-radius:18px;
+border-radius:16px;
 
 display:flex;
 
@@ -653,7 +933,7 @@ align-items:center;
 
 justify-content:center;
 
-margin-bottom:20px;
+font-size:22px;
 
 background:
 
@@ -663,23 +943,55 @@ linear-gradient(
 
 rgba(157,77,255,.18),
 
-rgba(77,241,255,.12)
+rgba(54,215,255,.10)
 
 );
 
-border:1px solid
-
-rgba(255,255,255,.08);
-
-font-size:22px;
+border:1px solid rgba(255,255,255,.08);
 
 }
 
-/* ==========================
-   STATS BAR
-========================== */
+/* ------------------------------------------------ */
 
-.stats-bar{
+.card-value{
+
+font-size:42px;
+
+font-weight:800;
+
+letter-spacing:-2px;
+
+margin-bottom:10px;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+#ffffff,
+
+#bfefff
+
+);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+}
+
+.card-desc{
+
+font-size:14px;
+
+color:var(--muted);
+
+}
+
+/* ------------------------------------------------ */
+
+.progress{
 
 height:8px;
 
@@ -689,13 +1001,15 @@ background:
 
 rgba(255,255,255,.06);
 
-margin-top:20px;
+margin-top:22px;
 
 overflow:hidden;
 
 }
 
-.stats-fill{
+.progress span{
+
+display:block;
 
 height:100%;
 
@@ -709,181 +1023,93 @@ linear-gradient(
 
 var(--purple),
 
-var(--pink),
-
 var(--cyan)
 
 );
 
-animation:
+}
 
-fillBar 2s ease;
+/* ------------------------------------------------ */
+
+.dashboard-row{
+
+display:grid;
+
+grid-template-columns:2fr 1fr;
+
+gap:22px;
+
+margin-top:24px;
 
 }
 
-/* ==========================
-   TABLE CONTAINER
-========================== */
+/* ------------------------------------------------ */
 
-.table-container{
+.panel{
 
 background:
 
-rgba(255,255,255,.03);
+linear-gradient(
+
+180deg,
+
+rgba(255,255,255,.04),
+
+rgba(255,255,255,.02)
+
+);
 
 border:1px solid var(--border);
 
 border-radius:24px;
 
-padding:0;
+padding:24px;
 
-overflow:hidden;
+backdrop-filter:blur(22px);
 
-backdrop-filter:blur(18px);
+box-shadow:
 
-box-shadow:var(--shadow);
-
-animation:fadePage .4s ease;
+0 8px 35px rgba(0,0,0,.22);
 
 }
 
-/* ==========================
-   TABLE
-========================== */
+/* ------------------------------------------------ */
 
-table{
+.panel-title{
 
-width:100%;
-
-border-collapse:collapse;
-
-}
-
-thead{
-
-background:
-
-rgba(255,255,255,.04);
-
-}
-
-th{
-
-padding:18px 20px;
-
-text-align:left;
-
-font-size:13px;
+font-size:18px;
 
 font-weight:700;
 
-letter-spacing:1px;
-
-color:var(--cyan);
-
-border-bottom:
-
-1px solid var(--border);
+margin-bottom:20px;
 
 }
 
-td{
-
-padding:18px 20px;
-
-font-size:14px;
-
-border-bottom:
-
-1px solid
-
-rgba(255,255,255,.04);
-
-transition:var(--transition);
-
-}
-
-tbody tr{
-
-transition:var(--transition);
-
-}
-
-tbody tr:hover{
-
-background:
-
-rgba(255,255,255,.035);
-
-}
-
-/* ==========================
-   CARD ANIMATION
-========================== */
-
-@keyframes cardFade{
-
-from{
-
-opacity:0;
-
-transform:
-
-translateY(25px)
-
-scale(.96);
-
-}
-
-to{
-
-opacity:1;
-
-transform:
-
-translateY(0)
-
-scale(1);
-
-}
-
-}
-
-/* ========================== */
-
-@keyframes fillBar{
-
-from{
-
-width:0;
-
-}
-
-to{
-
-width:100%;
-
-}
-
-}
-
-/* ==========================
-   MOBILE
-========================== */
+/* ------------------------------------------------ */
 
 @media(max-width:900px){
+
+.dashboard-row{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
 
 .cards{
 
 grid-template-columns:1fr;
 
-gap:18px;
+gap:16px;
 
 }
 
 .card{
 
-padding:22px;
+padding:20px;
 
 }
 
@@ -893,271 +1119,118 @@ font-size:34px;
 
 }
 
-.table-container{
+.card-icon{
 
-overflow:auto;
+width:46px;
+
+height:46px;
+
+font-size:18px;
 
 }
 
+}
+/* ==========================================================
+   BIGUUDEV ADMIN UI V4
+   PART 3B
+   Users Table
+========================================================== */
+
+.table-container{
+
+overflow-x:auto;
+
+border-radius:24px;
+
+background:
+
+linear-gradient(
+
+180deg,
+
+rgba(255,255,255,.04),
+
+rgba(255,255,255,.02)
+
+);
+
+border:1px solid var(--border);
+
+box-shadow:
+
+0 8px 35px rgba(0,0,0,.22);
+
+backdrop-filter:blur(24px);
+
+}
+
+/* ------------------------------------------------ */
+
 table{
+
+width:100%;
+
+border-collapse:collapse;
 
 min-width:760px;
 
 }
 
-}
-/* =======================================================
-   BiguuDev Admin Panel v3 Premium UI
-   Part 3 - Forms, Search, Buttons & Badges
-=======================================================*/
+thead{
 
-/* ==========================
-   TOOLBAR
-========================== */
+background:
 
-.toolbar{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-gap:18px;
-
-margin-bottom:28px;
-
-flex-wrap:wrap;
+rgba(255,255,255,.03);
 
 }
 
-/* ==========================
-   SEARCH
-========================== */
+th{
 
-.search-box{
+padding:18px 20px;
 
-width:340px;
-
-max-width:100%;
-
-height:54px;
-
-padding:0 20px;
-
-background:rgba(255,255,255,.035);
-
-border:1px solid var(--border);
-
-border-radius:18px;
-
-color:white;
-
-font-size:15px;
-
-outline:none;
-
-transition:var(--transition);
-
-backdrop-filter:blur(16px);
-
-}
-
-.search-box::placeholder{
-
-color:var(--muted);
-
-}
-
-.search-box:hover{
-
-border-color:
-
-rgba(157,77,255,.30);
-
-}
-
-.search-box:focus{
-
-border-color:
-
-var(--purple);
-
-box-shadow:
-
-0 0 25px
-
-rgba(157,77,255,.25);
-
-}
-
-/* ==========================
-   BUTTONS
-========================== */
-
-.btn{
-
-height:48px;
-
-padding:0 20px;
-
-border:none;
-
-border-radius:16px;
-
-cursor:pointer;
-
-font-size:14px;
+font-size:13px;
 
 font-weight:700;
 
-transition:var(--transition);
+text-align:left;
 
-display:inline-flex;
+letter-spacing:1px;
 
-align-items:center;
+color:#c8d3e3;
 
-justify-content:center;
-
-gap:10px;
+border-bottom:1px solid var(--border);
 
 }
 
-.btn:hover{
+td{
 
-transform:
+padding:18px 20px;
 
-translateY(-3px);
+font-size:14px;
+
+border-bottom:1px solid rgba(255,255,255,.05);
+
+transition:.25s;
 
 }
 
-/* ========================== */
+tbody tr{
 
-.btn-gold{
+transition:.25s;
+
+}
+
+tbody tr:hover{
 
 background:
 
-linear-gradient(
-
-135deg,
-
-var(--purple),
-
-var(--pink)
-
-);
-
-color:white;
-
-box-shadow:
-
-0 12px 35px
-
-rgba(157,77,255,.35);
+rgba(255,255,255,.03);
 
 }
 
-/* ========================== */
-
-.btn-blue{
-
-background:
-
-linear-gradient(
-
-135deg,
-
-#3B82F6,
-
-var(--cyan)
-
-);
-
-color:white;
-
-}
-
-/* ========================== */
-
-.btn-green{
-
-background:
-
-linear-gradient(
-
-135deg,
-
-#22C55E,
-
-var(--green)
-
-);
-
-color:white;
-
-}
-
-/* ========================== */
-
-.btn-red{
-
-background:
-
-linear-gradient(
-
-135deg,
-
-#EF4444,
-
-#ff4b67
-
-);
-
-color:white;
-
-}
-
-/* ========================== */
-
-.btn-gray{
-
-background:
-
-rgba(255,255,255,.06);
-
-color:white;
-
-border:1px solid
-
-rgba(255,255,255,.08);
-
-}
-
-/* ========================== */
-
-.btn:hover{
-
-filter:brightness(1.05);
-
-}
-
-/* ==========================
-   ACTIONS
-========================== */
-
-.actions{
-
-display:flex;
-
-gap:10px;
-
-flex-wrap:wrap;
-
-}
-
-/* ==========================
-   BADGES
-========================== */
+/* ==========================================================
+STATUS BADGES
+========================================================== */
 
 .badge{
 
@@ -1167,7 +1240,7 @@ align-items:center;
 
 justify-content:center;
 
-padding:7px 16px;
+padding:6px 14px;
 
 border-radius:999px;
 
@@ -1175,111 +1248,259 @@ font-size:12px;
 
 font-weight:700;
 
+letter-spacing:.4px;
+
 }
 
-/* ---------- Active ---------- */
+/* active */
 
 .badge.active{
 
 background:
 
-rgba(46,242,160,.14);
+rgba(34,211,126,.14);
 
-color:var(--green);
+color:#4df39b;
 
-border:
-
-1px solid
-
-rgba(46,242,160,.25);
+border:1px solid rgba(34,211,126,.22);
 
 }
 
-/* ---------- Disabled ---------- */
+/* disabled */
 
 .badge.disabled{
 
 background:
 
-rgba(255,75,103,.14);
+rgba(255,78,95,.12);
 
-color:#ff6d87;
+color:#ff7a8b;
 
-border:
-
-1px solid
-
-rgba(255,75,103,.25);
+border:1px solid rgba(255,78,95,.22);
 
 }
 
-/* ---------- Expired ---------- */
+/* expired */
 
 .badge.expired{
 
 background:
 
-rgba(255,200,87,.14);
+rgba(255,159,67,.12);
 
-color:var(--yellow);
+color:#ffc16f;
 
-border:
-
-1px solid
-
-rgba(255,200,87,.25);
+border:1px solid rgba(255,159,67,.22);
 
 }
 
-/* ==========================
-   FORM
-========================== */
+/* ==========================================================
+ACTION BUTTONS
+========================================================== */
 
-.form-card{
+.actions{
+
+display:flex;
+
+gap:8px;
+
+flex-wrap:wrap;
+
+}
+
+.action-btn{
+
+width:38px;
+
+height:38px;
+
+border-radius:12px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
 
 background:
 
-rgba(255,255,255,.035);
+rgba(255,255,255,.04);
 
 border:1px solid var(--border);
 
-border-radius:24px;
+color:white;
 
-padding:32px;
-
-backdrop-filter:blur(20px);
-
-box-shadow:var(--shadow);
-
-animation:cardFade .45s ease;
+transition:.25s;
 
 }
 
-/* ========================== */
+.action-btn:hover{
+
+transform:translateY(-2px);
+
+background:
+
+rgba(157,77,255,.18);
+
+border-color:
+
+rgba(157,77,255,.28);
+
+}
+
+/* ==========================================================
+SEARCH BAR
+========================================================== */
+
+.search-box{
+
+height:48px;
+
+padding:0 18px;
+
+border-radius:16px;
+
+border:1px solid var(--border);
+
+background:
+
+rgba(255,255,255,.04);
+
+color:white;
+
+font-size:14px;
+
+transition:.25s;
+
+}
+
+.search-box::placeholder{
+
+color:var(--muted);
+
+}
+
+.search-box:focus{
+
+border-color:
+
+rgba(157,77,255,.45);
+
+box-shadow:
+
+0 0 0 4px rgba(157,77,255,.08);
+
+}
+
+/* ==========================================================
+RESPONSIVE
+========================================================== */
+
+@media(max-width:768px){
+
+.table-container{
+
+border-radius:20px;
+
+}
+
+table{
+
+min-width:700px;
+
+}
+
+th{
+
+padding:16px;
+
+}
+
+td{
+
+padding:16px;
+
+}
+
+.actions{
+
+flex-wrap:nowrap;
+
+}
+
+}
+/* ==========================================================
+   BIGUUDEV ADMIN UI V4
+   PART 4
+   Forms • Settings • Buttons
+========================================================== */
+
+/* ==========================================================
+FORM CARD
+========================================================== */
+
+.form-card{
+
+max-width:760px;
+
+margin:auto;
+
+padding:28px;
+
+background:
+
+linear-gradient(
+180deg,
+rgba(255,255,255,.04),
+rgba(255,255,255,.02)
+);
+
+border:1px solid var(--border);
+
+border-radius:26px;
+
+backdrop-filter:blur(24px);
+
+box-shadow:
+0 12px 45px rgba(0,0,0,.28);
+
+}
+
+/* ------------------------------------------------ */
 
 .form-card h2{
 
 font-size:26px;
 
-margin-bottom:28px;
+font-weight:700;
+
+margin-bottom:26px;
+
+letter-spacing:-.5px;
 
 }
 
-/* ========================== */
+/* ==========================================================
+FORM
+========================================================== */
 
 .form{
 
 display:grid;
 
-grid-template-columns:
-
-repeat(2,1fr);
+grid-template-columns:repeat(2,1fr);
 
 gap:22px;
 
 }
 
-/* ========================== */
+.form-full{
+
+grid-column:1/-1;
+
+}
+
+/* ------------------------------------------------ */
 
 .form-group{
 
@@ -1291,19 +1512,19 @@ gap:10px;
 
 }
 
-/* ========================== */
-
 .form-group label{
 
 font-size:13px;
 
-color:var(--muted);
-
 font-weight:600;
+
+color:var(--muted);
 
 }
 
-/* ========================== */
+/* ==========================================================
+INPUTS
+========================================================== */
 
 .form-group input,
 
@@ -1311,7 +1532,9 @@ font-weight:600;
 
 .form-group textarea{
 
-height:54px;
+width:100%;
+
+height:52px;
 
 padding:0 18px;
 
@@ -1321,31 +1544,29 @@ rgba(255,255,255,.04);
 
 border:1px solid var(--border);
 
-border-radius:18px;
+border-radius:16px;
 
-color:white;
+color:#fff;
 
 font-size:14px;
 
-outline:none;
-
-transition:var(--transition);
+transition:.25s;
 
 }
 
-/* ========================== */
+/* textarea */
 
-textarea{
+.form-group textarea{
 
-height:120px !important;
+height:130px;
 
-padding-top:15px !important;
+padding:16px 18px;
 
 resize:none;
 
 }
 
-/* ========================== */
+/* focus */
 
 .form-group input:focus,
 
@@ -1355,43 +1576,227 @@ resize:none;
 
 border-color:
 
-var(--purple);
+rgba(157,77,255,.45);
 
 box-shadow:
 
-0 0 22px
-
-rgba(157,77,255,.22);
+0 0 0 4px rgba(157,77,255,.08);
 
 }
 
-/* ========================== */
+/* ==========================================================
+BUTTONS
+========================================================== */
 
-.form-full{
+.btn{
 
-grid-column:1/-1;
+height:50px;
+
+padding:0 22px;
+
+border-radius:16px;
+
+font-size:14px;
+
+font-weight:700;
+
+display:inline-flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:10px;
+
+transition:.25s;
 
 }
 
-/* ==========================
-   MOBILE
-========================== */
+/* Primary */
 
-@media(max-width:900px){
+.btn-primary{
 
-.toolbar{
+background:
 
-flex-direction:column;
+linear-gradient(
+135deg,
+var(--purple),
+var(--cyan)
+);
 
-align-items:stretch;
+color:white;
+
+box-shadow:
+
+0 12px 30px rgba(157,77,255,.25);
 
 }
 
-.search-box{
+.btn-primary:hover{
 
-width:100%;
+transform:translateY(-3px);
+
+box-shadow:
+
+0 18px 45px rgba(157,77,255,.35);
 
 }
+
+/* Secondary */
+
+.btn-secondary{
+
+background:
+
+rgba(255,255,255,.05);
+
+border:1px solid var(--border);
+
+color:white;
+
+}
+
+.btn-secondary:hover{
+
+background:
+
+rgba(255,255,255,.08);
+
+}
+
+/* Danger */
+
+.btn-danger{
+
+background:
+
+linear-gradient(
+135deg,
+#ff5b72,
+#ff7d55
+);
+
+color:white;
+
+}
+
+/* ==========================================================
+SETTINGS GRID
+========================================================== */
+
+.settings-grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+
+gap:24px;
+
+}
+
+/* ==========================================================
+SETTING CARD
+========================================================== */
+
+.setting-card{
+
+padding:24px;
+
+background:
+
+linear-gradient(
+180deg,
+rgba(255,255,255,.04),
+rgba(255,255,255,.02)
+);
+
+border-radius:24px;
+
+border:1px solid var(--border);
+
+transition:.25s;
+
+}
+
+.setting-card:hover{
+
+transform:translateY(-4px);
+
+border-color:
+
+rgba(157,77,255,.25);
+
+}
+
+/* ==========================================================
+SWITCH
+========================================================== */
+
+.switch{
+
+width:56px;
+
+height:30px;
+
+background:
+
+rgba(255,255,255,.08);
+
+border-radius:999px;
+
+position:relative;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.switch::after{
+
+content:"";
+
+position:absolute;
+
+left:4px;
+
+top:4px;
+
+width:22px;
+
+height:22px;
+
+border-radius:50%;
+
+background:white;
+
+transition:.25s;
+
+}
+
+.switch.active{
+
+background:
+
+linear-gradient(
+90deg,
+var(--purple),
+var(--cyan)
+);
+
+}
+
+.switch.active::after{
+
+left:30px;
+
+}
+
+/* ==========================================================
+RESPONSIVE
+========================================================== */
+
+@media(max-width:768px){
 
 .form{
 
@@ -1399,9 +1804,15 @@ grid-template-columns:1fr;
 
 }
 
-.actions{
+.form-card{
 
-flex-direction:column;
+padding:22px;
+
+}
+
+.form-card h2{
+
+font-size:22px;
 
 }
 
@@ -1411,11 +1822,52 @@ width:100%;
 
 }
 
+.settings-grid{
+
+grid-template-columns:1fr;
+
 }
-/* =======================================================
-   BiguuDev Admin Panel v3 Premium UI
-   Part 4 - Modal • Toast • Loader • Scrollbar • Final
-=======================================================*/
+
+}
+/* ==========================================================
+   BIGUUDEV ADMIN UI V4
+   PART 5
+   Final Polish • Modal • Toast • Animations
+========================================================== */
+
+/* ==========================
+   FADE ANIMATION
+========================== */
+
+@keyframes fadeUp{
+
+from{
+
+opacity:0;
+
+transform:translateY(18px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ==========================
+   PAGE
+========================== */
+
+.content>*{
+
+animation:fadeUp .35s ease;
+
+}
 
 /* ==========================
    MODAL
@@ -1433,15 +1885,13 @@ align-items:center;
 
 justify-content:center;
 
-background:rgba(0,0,0,.72);
+background:rgba(0,0,0,.65);
 
-backdrop-filter:blur(14px);
+backdrop-filter:blur(8px);
 
 z-index:9999;
 
-padding:25px;
-
-animation:fadeModal .25s ease;
+padding:20px;
 
 }
 
@@ -1451,11 +1901,15 @@ display:flex;
 
 }
 
-.modal-box{
+.modal-content{
 
 width:650px;
 
 max-width:100%;
+
+padding:30px;
+
+border-radius:28px;
 
 background:
 
@@ -1463,49 +1917,19 @@ linear-gradient(
 
 180deg,
 
-rgba(255,255,255,.06),
+rgba(18,22,34,.96),
 
-rgba(255,255,255,.03)
+rgba(12,15,24,.98)
 
 );
 
-border:1px solid var(--border);
-
-border-radius:26px;
-
-padding:30px;
+border:1px solid var(--border2);
 
 box-shadow:
 
-0 25px 90px rgba(0,0,0,.55),
+0 20px 80px rgba(0,0,0,.45);
 
-0 0 40px rgba(157,77,255,.18);
-
-animation:popup .35s ease;
-
-}
-
-/* ========================== */
-
-.modal-box h2{
-
-font-size:28px;
-
-margin-bottom:20px;
-
-}
-
-.modal-box table{
-
-width:100%;
-
-margin-top:10px;
-
-}
-
-.modal-box td{
-
-padding:12px 0;
+animation:fadeUp .25s ease;
 
 }
 
@@ -1517,47 +1941,31 @@ padding:12px 0;
 
 position:fixed;
 
-right:30px;
+right:25px;
 
-bottom:30px;
-
-min-width:260px;
+bottom:25px;
 
 padding:16px 22px;
 
 background:
 
-rgba(12,14,24,.92);
+rgba(17,21,31,.96);
 
-backdrop-filter:blur(18px);
+border:1px solid var(--border);
 
-border:1px solid
-
-rgba(157,77,255,.25);
-
-border-left:5px solid var(--purple);
+border-left:4px solid var(--purple);
 
 border-radius:18px;
 
 color:white;
 
-font-size:14px;
-
 font-weight:600;
-
-box-shadow:
-
-0 20px 60px rgba(0,0,0,.45);
 
 opacity:0;
 
-transform:
+transform:translateY(20px);
 
-translateY(30px);
-
-pointer-events:none;
-
-transition:.35s;
+transition:.3s;
 
 z-index:99999;
 
@@ -1567,9 +1975,7 @@ z-index:99999;
 
 opacity:1;
 
-transform:
-
-translateY(0);
+transform:translateY(0);
 
 }
 
@@ -1579,237 +1985,21 @@ translateY(0);
 
 .loader{
 
-width:70px;
+width:54px;
 
-height:70px;
+height:54px;
 
-margin:80px auto;
+margin:50px auto;
 
 border-radius:50%;
 
-border:4px solid
+border:4px solid rgba(255,255,255,.08);
 
-rgba(255,255,255,.08);
+border-top:4px solid var(--purple);
 
-border-top:4px solid
+border-right:4px solid var(--cyan);
 
-var(--purple);
-
-border-right:4px solid
-
-var(--cyan);
-
-animation:
-
-spin .8s linear infinite;
-
-box-shadow:
-
-0 0 40px
-
-rgba(157,77,255,.20);
-
-}
-
-/* ==========================
-   EMPTY
-========================== */
-
-.empty{
-
-padding:80px;
-
-text-align:center;
-
-font-size:16px;
-
-color:var(--muted);
-
-animation:fadePage .45s ease;
-
-}
-
-/* ==========================
-   SCROLLBAR
-========================== */
-
-::-webkit-scrollbar{
-
-width:11px;
-
-height:11px;
-
-}
-
-::-webkit-scrollbar-thumb{
-
-background:
-
-linear-gradient(
-
-180deg,
-
-var(--purple),
-
-var(--pink)
-
-);
-
-border-radius:999px;
-
-}
-
-::-webkit-scrollbar-thumb:hover{
-
-background:
-
-linear-gradient(
-
-180deg,
-
-var(--cyan),
-
-var(--purple)
-
-);
-
-}
-
-::-webkit-scrollbar-track{
-
-background:transparent;
-
-}
-
-/* Firefox */
-
-*{
-
-scrollbar-width:thin;
-
-scrollbar-color:
-
-var(--purple)
-
-transparent;
-
-}
-
-/* ==========================
-   SELECTION
-========================== */
-
-::selection{
-
-background:
-
-rgba(157,77,255,.35);
-
-color:white;
-
-}
-
-/* ==========================
-   LINKS
-========================== */
-
-a{
-
-color:var(--cyan);
-
-text-decoration:none;
-
-transition:var(--transition);
-
-}
-
-a:hover{
-
-color:white;
-
-}
-
-/* ==========================
-   FLOATING GLOW
-========================== */
-
-body::after{
-
-content:"";
-
-position:fixed;
-
-width:520px;
-
-height:520px;
-
-right:-180px;
-
-bottom:-180px;
-
-background:
-
-radial-gradient(
-
-circle,
-
-rgba(77,241,255,.10),
-
-transparent 70%
-
-);
-
-pointer-events:none;
-
-z-index:-1;
-
-}
-
-/* ==========================
-   ANIMATIONS
-========================== */
-
-@keyframes popup{
-
-from{
-
-opacity:0;
-
-transform:
-
-translateY(25px)
-
-scale(.94);
-
-}
-
-to{
-
-opacity:1;
-
-transform:
-
-translateY(0)
-
-scale(1);
-
-}
-
-}
-
-@keyframes fadeModal{
-
-from{
-
-opacity:0;
-
-}
-
-to{
-
-opacity:1;
-
-}
+animation:spin .8s linear infinite;
 
 }
 
@@ -1817,359 +2007,129 @@ opacity:1;
 
 100%{
 
-transform:
-
-rotate(360deg);
+transform:rotate(360deg);
 
 }
 
 }
 
 /* ==========================
-   MOBILE
+   HOVER EFFECTS
 ========================== */
 
-@media(max-width:768px){
+.card,
 
-.sidebar{
+.panel,
 
-position:fixed;
+.setting-card,
 
-left:0;
+.form-card{
 
-top:0;
+transition:
 
-bottom:0;
+transform .28s ease,
 
-z-index:999;
+box-shadow .28s ease,
 
-width:250px;
-
-}
-
-.topbar{
-
-height:70px;
-
-padding:0 18px;
+border-color .28s ease;
 
 }
 
-.title{
+.card:hover,
 
-font-size:22px;
+.panel:hover,
 
-}
+.setting-card:hover,
 
-.content{
+.form-card:hover{
 
-padding:20px;
+transform:translateY(-4px);
 
-}
+box-shadow:
 
-.modal-box{
-
-padding:22px;
-
-}
-
-.toast{
-
-left:20px;
-
-right:20px;
-
-bottom:20px;
-
-min-width:auto;
-
-}
-
-.loader{
-
-width:58px;
-
-height:58px;
-
-}
+0 18px 50px rgba(0,0,0,.35);
 
 }
 
 /* ==========================
-   LARGE SCREEN
+   BUTTON RIPPLE FEEL
 ========================== */
 
-@media(min-width:1800px){
+.btn{
 
-.content{
-
-max-width:1700px;
-
-margin:auto;
-
-}
-
-.cards{
-
-grid-template-columns:
-
-repeat(4,1fr);
-
-}
-
-}
-
-/* =======================================================
-   BiguuDev Admin Panel v3
-   Premium UI Completed
-=======================================================*/
-/* =======================================================
-   BiguuDev Admin Panel v3
-   Part 5 - Responsive Foundation
-======================================================= */
-
-/* -------------------------------
-   Global Scroll Fix
--------------------------------- */
-
-html,
-body{
-
-height:100%;
-
-overflow-x:hidden;
-
-overflow-y:auto;
-
-}
-
-body{
-   
-min-height:100vh;
-overflow-x:hidden;
-overflow-y:auto;
-   
-}
-
-/* -------------------------------
-   Layout
--------------------------------- */
-
-.main{
-
-min-width:0;
-
-min-height:100vh;
+position:relative;
 
 overflow:hidden;
 
 }
 
-.content{
+.btn::before{
 
-flex:1;
+content:"";
 
-overflow-y:auto;
+position:absolute;
 
-overflow-x:hidden;
-
-padding:28px;
-
-}
-
-/* -------------------------------
-   Topbar
--------------------------------- */
-
-.topbar{
-
-position:sticky;
+left:-120%;
 
 top:0;
 
-z-index:100;
+width:120%;
+
+height:100%;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.18),
+
+transparent
+
+);
+
+transition:.6s;
 
 }
 
-/* -------------------------------
-   Toolbar
--------------------------------- */
+.btn:hover::before{
 
-.toolbar{
-
-display:flex;
-
-align-items:center;
-
-justify-content:space-between;
-
-gap:18px;
-
-flex-wrap:wrap;
+left:120%;
 
 }
 
-/* -------------------------------
-   Search
--------------------------------- */
+/* ==========================
+   SAFE AREA (iPhone)
+========================== */
 
-.search-box{
-
-flex:1;
-
-max-width:420px;
-
-min-width:220px;
-
-}
-
-/* -------------------------------
-   Buttons
--------------------------------- */
-
-.actions{
-
-display:flex;
-
-gap:8px;
-
-flex-wrap:wrap;
-
-}
-
-/* -------------------------------
-   Table
--------------------------------- */
-
-.table-container{
-
-width:100%;
-
-overflow-x:auto;
-
-overflow-y:hidden;
-
--webkit-overflow-scrolling:touch;
-
-}
-
-.table-container table{
-
-min-width:760px;
-
-}
-
-/* -------------------------------
-   Cards
--------------------------------- */
-
-.cards{
-
-align-items:stretch;
-
-}
-
-/* -------------------------------
-   Forms
--------------------------------- */
-
-.form{
-
-display:grid;
-
-grid-template-columns:repeat(2,1fr);
-
-gap:22px;
-
-}
-
-.form-full{
-
-grid-column:1/-1;
-
-}
-
-/* =====================================================
-   TABLET
-===================================================== */
-
-@media(max-width:992px){
-
-.sidebar{
-
-width:230px;
-
-}
-
-.content{
-
-padding:22px;
-
-}
-
-.cards{
-
-grid-template-columns:repeat(2,1fr);
-
-}
-
-}
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media(max-width:768px){
+@supports(padding:max(0px)){
 
 body{
 
-overflow-y:auto;
+padding-left:
+
+max(0px,env(safe-area-inset-left));
+
+padding-right:
+
+max(0px,env(safe-area-inset-right));
 
 }
 
-/* Sidebar (prepare for slide menu) */
-
-.sidebar{
-
-position:fixed;
-
-left:0;
-
-top:0;
-
-bottom:0;
-
-width:270px;
-
-transform:translateX(-100%);
-
-transition:.35s ease;
-
-z-index:1000;
-
 }
 
-/* This class will be used later by JS */
+/* ==========================
+   MOBILE FINAL
+========================== */
 
-.sidebar.open{
-
-transform:translateX(0);
-
-}
-
-.main{
-
-width:100%;
-
-margin-left:0;
-
-}
+@media(max-width:768px){
 
 .topbar{
 
-padding:0 16px;
-
-height:64px;
+padding:0 14px;
 
 }
 
@@ -2179,558 +2139,37 @@ padding:16px;
 
 }
 
-/* Cards */
-
-.cards{
-
-grid-template-columns:1fr;
-
-gap:16px;
-
-}
-
-/* Toolbar */
-
-.toolbar{
-
-flex-direction:column;
-
-align-items:stretch;
-
-}
-
-.search-box{
-
-width:100%;
-
-max-width:100%;
-
-}
-
-/* Forms */
-
-.form{
-
-grid-template-columns:1fr;
-
-}
-
-/* Buttons */
-
-.btn{
-
-width:100%;
-
-}
-
-/* Actions */
-
-.actions{
-
-flex-direction:column;
-
-}
-
-/* Table */
-
-.table-container{
-
-border-radius:18px;
-
-}
-
-}
-
-/* =====================================================
-   SMALL MOBILE
-===================================================== */
-
-@media(max-width:480px){
-
 .logo{
 
-font-size:22px;
-
-}
-
-.title{
-
-font-size:22px;
-
-}
-
-.content{
-
-padding:14px;
+font-size:24px;
 
 }
 
 .card{
-
-padding:18px;
-
-}
-
-.card-value{
-
-font-size:30px;
-
-}
-
-}
-/* =======================================================
-   BiguuDev Admin Panel v3
-   Part 6 - Mobile Navigation
-======================================================= */
-
-/* ==========================
-   MOBILE MENU BUTTON
-========================== */
-
-.mobile-menu{
-
-display:none;
-
-width:46px;
-
-height:46px;
-
-border-radius:14px;
-
-background:rgba(255,255,255,.05);
-
-border:1px solid var(--border);
-
-color:#fff;
-
-cursor:pointer;
-
-align-items:center;
-
-justify-content:center;
-
-font-size:22px;
-
-transition:var(--transition);
-
-backdrop-filter:blur(20px);
-
-}
-
-.mobile-menu:hover{
-
-background:rgba(157,77,255,.18);
-
-border-color:var(--purple);
-
-transform:scale(1.05);
-
-}
-
-/* ==========================
-   OVERLAY
-========================== */
-
-.sidebar-overlay{
-
-position:fixed;
-
-inset:0;
-
-background:rgba(0,0,0,.55);
-
-backdrop-filter:blur(5px);
-
-opacity:0;
-
-visibility:hidden;
-
-transition:.3s;
-
-z-index:998;
-
-}
-
-.sidebar-overlay.show{
-
-opacity:1;
-
-visibility:visible;
-
-}
-
-/* ==========================
-   SIDEBAR HEADER
-========================== */
-
-.sidebar{
-
-overflow-y:auto;
-
-overflow-x:hidden;
-
-}
-
-.sidebar::-webkit-scrollbar{
-
-width:6px;
-
-}
-
-.sidebar::-webkit-scrollbar-thumb{
-
-background:rgba(255,255,255,.12);
 
 border-radius:20px;
 
 }
 
-/* ==========================
-   MENU
-========================== */
+.modal-content{
 
-.menu{
-
-padding-bottom:30px;
+padding:22px;
 
 }
 
-.menu button{
+.toast{
 
-display:flex;
+left:16px;
 
-align-items:center;
+right:16px;
 
-gap:14px;
-
-}
-
-/* ==========================
-   TOPBAR
-========================== */
-
-.topbar{
-
-display:flex;
-
-align-items:center;
-
-justify-content:space-between;
-
-gap:15px;
-
-}
-
-.topbar-left{
-
-display:flex;
-
-align-items:center;
-
-gap:16px;
-
-}
-
-.topbar-right{
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-}
-
-/* ==========================
-   MOBILE
-========================== */
-
-@media(max-width:768px){
-
-.mobile-menu{
-
-display:flex;
-
-}
-
-.sidebar{
-
-left:0;
-
-top:0;
-
-bottom:0;
-
-height:100vh;
-
-box-shadow:
-
-25px 0 60px rgba(0,0,0,.45);
-
-}
-
-.sidebar.open{
-
-transform:translateX(0);
-
-}
-
-.title{
-
-font-size:22px;
-
-}
-
-.topbar{
-
-height:68px;
+bottom:16px;
 
 }
 
 }
 
-/* ==========================
-   SMALL PHONE
-========================== */
-
-@media(max-width:480px){
-
-.sidebar{
-
-width:250px;
-
-}
-
-.card{
-
-border-radius:18px;
-
-}
-
-.btn{
-
-height:46px;
-
-font-size:13px;
-
-}
-
-.search-box{
-
-height:48px;
-
-font-size:14px;
-
-}
-
-.form-group input,
-
-.form-group select{
-
-height:48px;
-
-}
-
-}
-/* =======================================================
-   BiguuDev Admin Panel v3
-   Part 7 - UI Polish
-======================================================= */
-
-/* ==========================
-   TOPBAR
-========================== */
-
-.topbar{
-    height:64px !important;
-    padding:0 18px !important;
-}
-
-.title{
-    font-size:26px !important;
-    font-weight:700;
-}
-
-.topbar>div:last-child{
-    font-size:16px;
-    opacity:.9;
-}
-
-/* ==========================
-   MOBILE MENU BUTTON
-========================== */
-
-.mobile-menu{
-    width:44px !important;
-    height:44px !important;
-    border-radius:14px !important;
-    font-size:20px !important;
-}
-
-/* ==========================
-   CONTENT
-========================== */
-
-.content{
-    padding:18px !important;
-}
-
-/* ==========================
-   CARDS
-========================== */
-
-.card{
-    padding:22px !important;
-    border-radius:20px !important;
-}
-
-.card-title{
-    font-size:12px !important;
-    letter-spacing:2px;
-}
-
-.card-value{
-    font-size:38px !important;
-}
-
-/* Dashboard stat cards */
-.cards .card{
-    min-height:150px;
-}
-
-/* ==========================
-   FORM CARD
-========================== */
-
-.form-card{
-    max-width:720px;
-    margin:auto;
-    padding:24px !important;
-}
-
-.form-card h2{
-    font-size:24px;
-    margin-bottom:22px;
-}
-
-/* ==========================
-   INPUTS
-========================== */
-
-.form-group input,
-.form-group select,
-.search-box{
-    height:50px !important;
-    border-radius:16px !important;
-    font-size:15px;
-}
-
-/* ==========================
-   BUTTONS
-========================== */
-
-.btn{
-    height:48px !important;
-    border-radius:16px !important;
-}
-
-.btn-gold{
-    box-shadow:
-    0 8px 25px rgba(157,77,255,.22);
-}
-
-/* ==========================
-   TABLE
-========================== */
-
-th{
-    font-size:12px !important;
-}
-
-td{
-    font-size:14px !important;
-    padding:16px !important;
-}
-
-.badge{
-    padding:6px 14px !important;
-    font-size:12px !important;
-}
-
-/* ==========================
-   MOBILE
-========================== */
-
-@media(max-width:768px){
-
-.topbar{
-    height:60px !important;
-    padding:0 12px !important;
-}
-
-.title{
-    font-size:18px !important;
-}
-
-.topbar>div:last-child{
-    font-size:14px;
-}
-
-.content{
-    padding:14px !important;
-}
-
-.card{
-    padding:18px !important;
-}
-
-.cards .card{
-    min-height:130px;
-}
-
-.card-value{
-    font-size:32px !important;
-}
-
-.form-card{
-    padding:18px !important;
-}
-
-.search-box{
-    height:46px !important;
-}
-
-.btn{
-    height:46px !important;
-}
-
-.table-container{
-    border-radius:18px;
-}
-
-}
-
-/* ==========================
-   SMALL PHONE
-========================== */
-
-@media(max-width:430px){
-
-.title{
-    font-size:16px !important;
-}
-
-.mobile-menu{
-    width:40px !important;
-    height:40px !important;
-}
-
-.logo{
-    font-size:22px;
-}
-
-.card-value{
-    font-size:28px !important;
-}
-
-}
+/* ==========================================================
+   BIGUUDEV ADMIN UI V4
+   COMPLETE
+========================================================== */
