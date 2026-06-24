@@ -2750,13 +2750,8 @@ function closeSidebar() {
 
 if (mobileMenu) {
     mobileMenu.addEventListener("click", () => {
-        if (sidebar.classList.contains("open")) {
-            closeSidebar();
-        } else {
-            openSidebar();
-        }
-    });
-}
+    alert("Clicked");
+});
 
 if (overlay) {
     overlay.addEventListener("click", closeSidebar);
