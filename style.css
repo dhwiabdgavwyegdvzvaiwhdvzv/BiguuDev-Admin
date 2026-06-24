@@ -2173,3 +2173,88 @@ bottom:16px;
    BIGUUDEV ADMIN UI V4
    COMPLETE
 ========================================================== */
+/* ===========================
+   Primary Buttons
+=========================== */
+
+button,
+input[type="submit"],
+input[type="button"] {
+
+    border: none;
+    outline: none;
+    cursor: pointer;
+
+    color: #ffffff;
+
+    background: linear-gradient(
+        135deg,
+        #8b5cf6,
+        #6366f1,
+        #06b6d4
+    );
+
+    border-radius: 16px;
+
+    transition: .25s ease;
+
+    box-shadow:
+        0 8px 30px rgba(99,102,241,.35);
+}
+
+button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 35px rgba(99,102,241,.45);
+
+    filter: brightness(1.05);
+}
+
+button:active{
+
+    transform: scale(.97);
+}
+
+
+/* ===========================
+   Action Buttons
+=========================== */
+
+.btn-view{
+
+    background:linear-gradient(135deg,#3b82f6,#2563eb);
+
+}
+
+.btn-enable{
+
+    background:linear-gradient(135deg,#10b981,#059669);
+
+}
+
+.btn-disable{
+
+    background:linear-gradient(135deg,#f59e0b,#d97706);
+
+}
+
+.btn-delete{
+
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+
+}
+
+.btn-save,
+.btn-create,
+.btn-refresh{
+
+    background:linear-gradient(
+        135deg,
+        #8b5cf6,
+        #6366f1,
+        #06b6d4
+    );
+
+}
