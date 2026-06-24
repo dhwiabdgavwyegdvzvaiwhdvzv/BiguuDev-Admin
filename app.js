@@ -2750,14 +2750,18 @@ function closeSidebar() {
 
 if (mobileMenu) {
     mobileMenu.addEventListener("click", () => {
-    alert("Clicked");
-});
+        if (sidebar.classList.contains("open")) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+}
 
 if (overlay) {
     overlay.addEventListener("click", closeSidebar);
 }
 
-// Close sidebar after selecting a menu item (mobile only)
 document.querySelectorAll(".menu button").forEach(btn => {
     btn.addEventListener("click", () => {
         if (window.innerWidth <= 768) {
@@ -2766,7 +2770,6 @@ document.querySelectorAll(".menu button").forEach(btn => {
     });
 });
 
-// Auto close when screen becomes desktop size
 window.addEventListener("resize", () => {
     if (window.innerWidth > 768) {
         closeSidebar();
