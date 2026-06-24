@@ -1,89 +1,350 @@
 <!DOCTYPE html>
 <html lang="en">
-  
+
 <head>
-  
+
 <meta charset="UTF-8">
-  
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>BiguuDev Admin</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-<link rel="stylesheet" href="style.css">
-  
+<meta name="theme-color"
+content="#08090D">
+
+<title>BiguuDev Admin Panel</title>
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="style.css">
+
 </head>
 
 <body>
 
-<div class="sidebar">
+<div class="app">
 
-<div class="logo">
+    <!-- ========================= -->
+    <!-- Sidebar -->
+    <!-- ========================= -->
 
-BIGUUDEV
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    B
+                </div>
+
+                <div class="logo-text">
+
+                    <h2>BIGUUDEV</h2>
+
+                    <span>Admin Panel</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <nav class="menu">
+
+            <button
+            id="btnDashboard"
+            class="active">
+
+                <span>🏠</span>
+
+                Dashboard
+
+            </button>
+
+            <button
+            id="btnUsers">
+
+                <span>👥</span>
+
+                Users
+
+            </button>
+
+            <button
+            id="btnAdd">
+
+                <span>➕</span>
+
+                Add User
+
+            </button>
+
+            <button
+            id="btnStatistics">
+
+                <span>📊</span>
+
+                Statistics
+
+            </button>
+
+            <button
+            id="btnSettings">
+
+                <span>⚙️</span>
+
+                Settings
+
+            </button>
+
+        </nav>
+
+    </aside>
+
+    <!-- Main starts here -->
+
+    <main class="main">
+              <!-- ========================= -->
+        <!-- Top Bar -->
+        <!-- ========================= -->
+
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    class="mobile-menu"
+                    id="mobileMenu">
+
+                    ☰
+
+                </button>
+
+                <div class="page-heading">
+
+                    <h1
+                        class="page-title"
+                        id="pageTitle">
+
+                        Dashboard
+
+                    </h1>
+
+                    <p class="page-description">
+
+                        Welcome back, Administrator
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="topbar-center">
+
+                <div class="search-box">
+
+                    <span class="search-icon">
+
+                        🔍
+
+                    </span>
+
+                    <input
+
+                        id="globalSearch"
+
+                        type="text"
+
+                        placeholder="Search users, tokens, settings..."
+
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="topbar-right">
+
+                <button
+
+                    class="icon-button"
+
+                    id="btnRefresh"
+
+                    title="Refresh"
+
+                >
+
+                    ⟳
+
+                </button>
+
+                <button
+
+                    class="icon-button"
+
+                    id="btnNotification"
+
+                    title="Notifications"
+
+                >
+
+                    🔔
+
+                </button>
+
+                <button
+
+                    class="icon-button"
+
+                    id="btnTheme"
+
+                    title="Theme"
+
+                >
+
+                    🌙
+
+                </button>
+
+                <div class="profile-card">
+
+                    <div class="avatar">
+
+                        B
+
+                    </div>
+
+                    <div class="profile-info">
+
+                        <strong>
+
+                            BiguuDev
+
+                        </strong>
+
+                        <small>
+
+                            Administrator
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- ========================= -->
+        <!-- Main Content -->
+        <!-- ========================= -->
+
+        <section class="content">
+
+            <div
+
+                id="app"
+
+                class="page-content"
+
+            >
+
+                Loading...
+
+            </div>
+
+        </section>
+
+              <!-- ========================= -->
+        <!-- Sidebar Overlay -->
+        <!-- ========================= -->
+
+        <div
+
+            class="sidebar-overlay"
+
+            id="sidebarOverlay"
+
+        ></div>
+
+        <!-- ========================= -->
+        <!-- Loading Overlay -->
+        <!-- ========================= -->
+
+        <div
+
+            class="loading-screen"
+
+            id="loadingScreen"
+
+        >
+
+            <div class="loader"></div>
+
+            <p>
+
+                Loading BiguuDev Admin...
+
+            </p>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- Toast Container -->
+        <!-- ========================= -->
+
+        <div
+
+            id="toastContainer"
+
+            class="toast-container"
+
+        ></div>
+
+        <!-- ========================= -->
+        <!-- Modal -->
+        <!-- ========================= -->
+
+        <div
+
+            id="modal"
+
+            class="modal"
+
+        >
+
+            <div class="modal-content">
+
+                <div
+
+                    id="modalBody"
+
+                >
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
 
 </div>
-
-<div class="menu">
-
-<button id="btnDashboard" class="active">
-Dashboard
-</button>
-
-<button id="btnUsers">
-Users
-</button>
-
-<button id="btnAdd">
-Add User
-</button>
-
-<button id="btnStatistics">
-Statistics
-</button>
-
-<button id="btnSettings">
-Settings
-</button>
-
-</div>
-
-</div>
-
-<div class="main">
-
-<div class="topbar">
-  
-<button class="mobile-menu" id="mobileMenu">
-☰
-</button>
-  
-<div class="title" id="pageTitle">
-
-Dashboard
-
-</div>
-
-<div>
-
-BiguuDev Admin
-
-</div>
-
-</div>
-
-<div class="content">
-
-    <div id="app">
-        Loading...
-    </div>
-
-</div>
-
-</div>
-
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <script src="app.js"></script>
 
 </body>
+
 </html>
