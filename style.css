@@ -887,9 +887,12 @@ input[type="number"]::-webkit-outer-spin-button { opacity: 0.3; }
   .content { padding: 12px; }
   .topbar { height: 54px; }
 }
-/* Fixed Background */
+
 html {
-    background: url("https://i.pinimg.com/736x/8c/64/5b/8c645b64ad5ccb33eeb1ab667d357096.jpg") center center / cover no-repeat fixed;
+    background:
+        linear-gradient(rgba(0,0,0,0.80), rgba(0,0,0,0.80)),
+        url("https://i.pinimg.com/736x/8c/64/5b/8c645b64ad5ccb33eeb1ab667d357096.jpg")
+        center center / cover no-repeat fixed;
 }
 
 body {
