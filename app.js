@@ -2785,46 +2785,194 @@ window.addEventListener("resize", () => {
 // Scripts
 // =====================================
 
-function loadScripts(){
+let replaceTargetKey = null;
+
+async function loadScripts(){
 
     pageTitle.textContent = "Scripts";
 
     setActive("btnScripts");
 
-    app.innerHTML = `
+    showLoader();
 
-<div class="form-card">
+    try{
 
-<h2>Scripts</h2>
+        const res = await api("/scripts");
 
-<p style="margin-bottom:20px;color:#6B8FAF;">
+        renderScripts(res.scripts || []);
 
-Upload JavaScript files to Cloudflare KV.
+    }catch(err){
 
-</p>
+        showError(err.message);
 
-<input
-id="scriptFile"
-type="file"
-accept=".js">
+    }
 
-<br><br>
+}
+
+function scriptRow(key){
+
+return `
+
+<tr>
+
+<td>${key}</td>
+
+<td>
+
+<div class="actions">
 
 <button
-class="btn btn-gold"
-onclick="uploadScript()">
+class="btn btn-blue"
+onclick="replaceScript('${key}')">
 
-Upload Script
+Replace
 
 </button>
+
+<button
+class="btn btn-red"
+onclick="deleteScript('${key}')">
+
+Delete
+
+</button>
+
 </div>
+
+</td>
+
+</tr>
 
 `;
 
 }
-function uploadScript(){
 
-    const file = document.getElementById("scriptFile").files[0];
+function renderScripts(scripts){
+
+let html = `
+
+<div class="form-card">
+
+<h2>Upload Script</h2>
+
+<div class="form">
+
+<div class="form-group">
+
+<label>KV Key</label>
+
+<input
+id="newScriptKey"
+type="text"
+placeholder="e.g. vmc_a92f7c18e5">
+
+</div>
+
+<div class="form-group">
+
+<label>JS File</label>
+
+<input
+id="newScriptFile"
+type="file"
+accept=".js">
+
+</div>
+
+<div class="form-group">
+
+<label>&nbsp;</label>
+
+<button
+class="btn btn-gold"
+onclick="uploadNewScript()">
+
+Upload Script
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<br>
+
+<div class="toolbar">
+
+<div></div>
+
+<button
+class="btn btn-gold"
+onclick="loadScripts()">
+
+Refresh
+
+</button>
+
+</div>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Key</th>
+
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+`;
+
+scripts.forEach(key=>{
+
+html += scriptRow(key);
+
+});
+
+html += `
+
+</tbody>
+
+</table>
+
+</div>
+
+<input
+type="file"
+id="replaceFileInput"
+accept=".js"
+style="display:none"
+onchange="handleReplaceFileChosen()">
+
+`;
+
+app.innerHTML = html;
+
+}
+
+function uploadNewScript(){
+
+    const key = document.getElementById("newScriptKey").value.trim();
+
+    const file = document.getElementById("newScriptFile").files[0];
+
+    if(!key){
+
+        showToast("KV Key required");
+
+        return;
+
+    }
 
     if(!file){
 
@@ -2834,23 +2982,93 @@ function uploadScript(){
 
     }
 
+    doScriptUpload(key, file);
+
+}
+
+function replaceScript(key){
+
+    replaceTargetKey = key;
+
+    document.getElementById("replaceFileInput").click();
+
+}
+
+function handleReplaceFileChosen(){
+
+    const file = document.getElementById("replaceFileInput").files[0];
+
+    if(!file) return;
+
+    doScriptUpload(replaceTargetKey, file);
+
+}
+
+function doScriptUpload(key, file){
+
     const reader = new FileReader();
 
     reader.onload = function(){
 
-        showToast("JS Loaded");
+        fetch(
 
-        fetch(API + "/script/upload?key=" + ADMIN_KEY, {
-            method: "POST"
-        })
+            API +
+            "/script/upload?id=" +
+            encodeURIComponent(key) +
+            "&key=" +
+            encodeURIComponent(ADMIN_KEY),
+
+            {
+                method: "POST",
+                body: reader.result
+            }
+
+        )
         .then(r => r.json())
         .then(data => {
 
-            showToast(data.message);
+            showToast(data.message || "Script Uploaded");
+
+            loadScripts();
+
+        })
+        .catch(err => {
+
+            showToast(err.message);
 
         });
 
-    
+    };
+
     reader.readAsText(file);
-};
+
+}
+
+async function deleteScript(id){
+
+    if(!confirmAction("Delete this script?")) return;
+
+    try{
+
+        const result = await api(
+
+            "/script/delete?id=" +
+            encodeURIComponent(id),
+
+            {
+                method: "POST"
+            }
+
+        );
+
+        showToast(result.message);
+
+        loadScripts();
+
+    }catch(err){
+
+        showToast(err.message);
+
+    }
+
 }
