@@ -2834,6 +2834,12 @@ function uploadScript(){
 
     }
 
-    showToast(file.name);
+const reader = new FileReader();
 
-}
+reader.onload = function(){
+
+    showToast("JS Loaded");
+
+};
+
+reader.readAsText(file);
