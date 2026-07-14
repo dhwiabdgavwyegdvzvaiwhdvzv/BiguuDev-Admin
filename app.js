@@ -2811,14 +2811,29 @@ accept=".js">
 <br><br>
 
 <button
-class="btn btn-gold">
+class="btn btn-gold"
+onclick="uploadScript()">
 
 Upload Script
 
 </button>
-
 </div>
 
 `;
+
+}
+function uploadScript(){
+
+    const file = document.getElementById("scriptFile").files[0];
+
+    if(!file){
+
+        showToast("Please select a .js file");
+
+        return;
+
+    }
+
+    showToast(file.name);
 
 }
