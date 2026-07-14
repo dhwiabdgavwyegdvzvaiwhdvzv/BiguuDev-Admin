@@ -324,6 +324,12 @@ document
 
 .onclick=loadSettings;
 
+document
+    
+.getElementById("btnScripts")
+    
+.onclick=loadScripts;
+
 // =====================================
 // Start
 // =====================================
@@ -2775,3 +2781,44 @@ window.addEventListener("resize", () => {
         closeSidebar();
     }
 });
+// =====================================
+// Scripts
+// =====================================
+
+function loadScripts(){
+
+    pageTitle.textContent = "Scripts";
+
+    setActive("btnScripts");
+
+    app.innerHTML = `
+
+<div class="form-card">
+
+<h2>Scripts</h2>
+
+<p style="margin-bottom:20px;color:#6B8FAF;">
+
+Upload JavaScript files to Cloudflare KV.
+
+</p>
+
+<input
+id="scriptFile"
+type="file"
+accept=".js">
+
+<br><br>
+
+<button
+class="btn btn-gold">
+
+Upload Script
+
+</button>
+
+</div>
+
+`;
+
+}
