@@ -2850,8 +2850,7 @@ function uploadScript(){
 
         });
 
-    };
-
+    
     reader.readAsText(file);
-
+};
 }
