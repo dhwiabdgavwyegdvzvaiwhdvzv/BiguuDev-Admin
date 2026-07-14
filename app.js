@@ -2839,7 +2839,15 @@ const reader = new FileReader();
 reader.onload = function(){
 
     showToast("JS Loaded");
+fetch(API + "/script/upload?key=" + ADMIN_KEY, {
+    method: "POST"
+})
+.then(r => r.json())
+.then(data => {
 
+    showToast(data.message);
+
+});
 };
 
 reader.readAsText(file);
