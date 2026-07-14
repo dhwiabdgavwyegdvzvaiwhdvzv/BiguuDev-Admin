@@ -2834,20 +2834,24 @@ function uploadScript(){
 
     }
 
-const reader = new FileReader();
+    const reader = new FileReader();
 
-reader.onload = function(){
+    reader.onload = function(){
 
-    showToast("JS Loaded");
-fetch(API + "/script/upload?key=" + ADMIN_KEY, {
-    method: "POST"
-})
-.then(r => r.json())
-.then(data => {
+        showToast("JS Loaded");
 
-    showToast(data.message);
+        fetch(API + "/script/upload?key=" + ADMIN_KEY, {
+            method: "POST"
+        })
+        .then(r => r.json())
+        .then(data => {
 
-});
-};
+            showToast(data.message);
 
-reader.readAsText(file);
+        });
+
+    };
+
+    reader.readAsText(file);
+
+}
