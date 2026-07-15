@@ -3284,6 +3284,26 @@ function updateAccessCount(scriptKey){
 
 }
 
+function selectAllAccessUsers(scriptKey){
+
+    document
+
+    .querySelectorAll("#accessUserList .script-check")
+
+    .forEach(row => {
+
+        if(row.style.display === "none") return;
+
+        const box = row.querySelector("input[type=checkbox]");
+
+        if(box) box.checked = true;
+
+    });
+
+    updateAccessCount(scriptKey);
+
+}
+
 function accessUserRow(user, scriptKey){
 
     const checked = getEffectiveScripts(user).includes(scriptKey) ? "checked" : "";
@@ -3345,6 +3365,14 @@ ${accessModalUsers.map(user => accessUserRow(user, scriptKey)).join("")}
 <br>
 
 <div class="actions">
+
+<button
+class="btn btn-gray"
+onclick="selectAllAccessUsers('${scriptKey}')">
+
+Select All
+
+</button>
 
 <button
 class="btn btn-gold"
