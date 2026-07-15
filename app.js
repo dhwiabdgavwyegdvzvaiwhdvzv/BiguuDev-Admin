@@ -189,6 +189,76 @@ function confirmAction(message){
 }
 
 // =====================================
+// Script Checklist (shared: Add User / Edit User)
+// =====================================
+
+async function fetchScriptList(){
+
+    try{
+
+        const res = await api("/scripts");
+
+        return res.scripts || [];
+
+    }catch(err){
+
+        return [];
+
+    }
+
+}
+
+// Mirrors the vmc Worker's fallback (vmc.txt) for users with no explicit `scripts` field.
+// Single source of truth in the frontend — every place that needs a user's effective
+// script access should call this instead of re-deriving the default inline.
+function getEffectiveScripts(user){
+
+    return Array.isArray(user.scripts) ? user.scripts : ["VMC.js"];
+
+}
+
+function renderScriptCheckboxes(allScripts, selected){
+
+    const list = getEffectiveScripts({scripts: selected});
+
+    if(!allScripts.length){
+
+        return `<p class="field-hint">No scripts uploaded yet. Upload one from the Scripts page.</p>`;
+
+    }
+
+    let html = `<div class="script-checklist">`;
+
+    allScripts.forEach(name=>{
+
+        const checked = list.includes(name) ? "checked" : "";
+
+        html += `
+<label class="script-check">
+<input type="checkbox" value="${name}" ${checked}>
+<span>${name}</span>
+</label>
+`;
+
+    });
+
+    html += `</div>`;
+
+    return html;
+
+}
+
+function collectCheckedScripts(containerEl){
+
+    return Array.from(
+
+        containerEl.querySelectorAll(".script-checklist input[type=checkbox]:checked")
+
+    ).map(el => el.value);
+
+}
+
+// =====================================
 // Dashboard
 // =====================================
 
@@ -375,17 +445,17 @@ return `
 
 <tr>
 
-<td>${user.username}</td>
+<td data-label="Username">${user.username}</td>
 
-<td>${statusBadge(user.status)}</td>
+<td data-label="Status">${statusBadge(user.status)}</td>
 
-<td>${unixToDate(user.expire)}</td>
+<td data-label="Expire">${unixToDate(user.expire)}</td>
 
-<td>${unixToDate(user.lastSeen)}</td>
+<td data-label="Last Seen">${unixToDate(user.lastSeen)}</td>
 
-<td>${user.ip||"-"}</td>
+<td data-label="IP">${user.ip||"-"}</td>
 
-<td>
+<td data-label="Actions">
 
 <div class="actions">
 
@@ -394,6 +464,14 @@ class="btn btn-blue"
 onclick="viewUser('${user.key}')">
 
 View
+
+</button>
+
+<button
+class="btn btn-blue"
+onclick="editUser('${user.key}')">
+
+Edit
 
 </button>
 
@@ -491,7 +569,7 @@ Refresh
 
 <div class="table-container">
 
-<table>
+<table class="table-cards">
 
 <thead>
 
@@ -664,13 +742,17 @@ refreshUsers();
 // Add User Page
 // -------------------------------
 
-function loadAddUser(){
+async function loadAddUser(){
 
 pageTitle.textContent="Add User";
 
 setActive("btnAdd");
 
 const expire=Math.floor(Date.now()/1000)+(30*24*60*60);
+
+showLoader();
+
+const allScripts = await fetchScriptList();
 
 app.innerHTML=`
 
@@ -710,6 +792,14 @@ placeholder="Unique Token">
 id="expire"
 type="number"
 value="${expire}">
+
+</div>
+
+<div class="form-group form-full">
+
+<label>Allowed Scripts</label>
+
+${renderScriptCheckboxes(allScripts, [])}
 
 </div>
 
@@ -795,6 +885,8 @@ return;
 
 }
 
+const scripts = collectCheckedScripts(app);
+
 try{
 
 showToast("Creating...");
@@ -815,7 +907,9 @@ username,
 
 token,
 
-expire
+expire,
+
+scripts
 
 })
 
@@ -1027,41 +1121,111 @@ showToast(err.message);
 
 async function editUser(id){
 
-const data=
+let data, allScripts;
 
-await api(
+try{
 
-"/user?id="+
+[data, allScripts] = await Promise.all([
 
-encodeURIComponent(id)
+api("/user?id="+encodeURIComponent(id)),
 
-);
+fetchScriptList()
+
+]);
+
+}catch(err){
+
+showToast(err.message);
+
+return;
+
+}
 
 const user=data.profile;
 
+const isLegacy = user.scripts == null;
+
+openModal(`
+
+<h2>Edit User</h2>
+
+<div class="form">
+
+<div class="form-group form-full">
+
+<label>Username</label>
+
+<input id="editUsername" type="text" value="${user.username}">
+
+</div>
+
+<div class="form-group form-full">
+
+<label>Expire (Unix)</label>
+
+<input id="editExpire" type="number" value="${user.expire}">
+
+</div>
+
+<div class="form-group form-full">
+
+<label>Allowed Scripts</label>
+
+${isLegacy ? `<p class="field-hint">No scripts saved yet for this user — currently running on the legacy default (VMC.js).</p>` : ""}
+
+${renderScriptCheckboxes(allScripts, user.scripts)}
+
+</div>
+
+</div>
+
+<br>
+
+<div class="actions">
+
+<button
+class="btn btn-gold"
+onclick="saveEditUser('${id}')">
+
+Save Changes
+
+</button>
+
+</div>
+
+`);
+
+}
+
+async function saveEditUser(id){
+
 const username=
 
-prompt(
-
-"Username",
-
-user.username
-
-);
-
-if(username===null) return;
+document.getElementById("editUsername").value.trim();
 
 const expire=
 
-prompt(
+Number(document.getElementById("editExpire").value);
 
-"Expire",
+if(!username){
 
-user.expire
+showToast("Username required");
 
-);
+return;
 
-if(expire===null) return;
+}
+
+if(!expire){
+
+showToast("Expire required");
+
+return;
+
+}
+
+const scripts=
+
+collectCheckedScripts(document.getElementById("modalContent"));
 
 try{
 
@@ -1081,7 +1245,9 @@ token:id,
 
 username,
 
-expire:Number(expire)
+expire,
+
+scripts
 
 })
 
@@ -1090,6 +1256,8 @@ expire:Number(expire)
 );
 
 showToast(result.message);
+
+closeModal();
 
 refreshUsers();
 
@@ -2051,6 +2219,14 @@ async function viewUser(id){
 
 </tr>
 
+<tr>
+
+<td>Scripts</td>
+
+<td>${(p.scripts && p.scripts.length) ? p.scripts.join(", ") : "VMC.js (default)"}</td>
+
+</tr>
+
 </table>
 
 <br>
@@ -2815,9 +2991,9 @@ return `
 
 <tr>
 
-<td>${key}</td>
+<td data-label="Key">${key}</td>
 
-<td>
+<td data-label="Actions">
 
 <div class="actions">
 
@@ -2834,6 +3010,14 @@ class="btn btn-red"
 onclick="deleteScript('${key}')">
 
 Delete
+
+</button>
+
+<button
+class="btn btn-green"
+onclick="openAccessModal('${key}')">
+
+Access
 
 </button>
 
@@ -2857,18 +3041,7 @@ let html = `
 
 <div class="form">
 
-<div class="form-group">
-
-<label>KV Key</label>
-
-<input
-id="newScriptKey"
-type="text"
-placeholder="e.g. vmc_a92f7c18e5">
-
-</div>
-
-<div class="form-group">
+<div class="form-group form-full">
 
 <label>JS File</label>
 
@@ -2876,6 +3049,8 @@ placeholder="e.g. vmc_a92f7c18e5">
 id="newScriptFile"
 type="file"
 accept=".js">
+
+<small class="field-hint">The filename becomes the KV key exactly as-is.</small>
 
 </div>
 
@@ -2915,7 +3090,7 @@ Refresh
 
 <div class="table-container">
 
-<table>
+<table class="table-cards">
 
 <thead>
 
@@ -2962,17 +3137,7 @@ app.innerHTML = html;
 
 function uploadNewScript(){
 
-    const key = document.getElementById("newScriptKey").value.trim();
-
     const file = document.getElementById("newScriptFile").files[0];
-
-    if(!key){
-
-        showToast("KV Key required");
-
-        return;
-
-    }
 
     if(!file){
 
@@ -2982,7 +3147,15 @@ function uploadNewScript(){
 
     }
 
-    doScriptUpload(key, file);
+    if(!file.name.toLowerCase().endsWith(".js")){
+
+        showToast("File must be a .js file");
+
+        return;
+
+    }
+
+    doScriptUpload(file.name, file);
 
 }
 
@@ -3064,6 +3237,222 @@ async function deleteScript(id){
         showToast(result.message);
 
         loadScripts();
+
+    }catch(err){
+
+        showToast(err.message);
+
+    }
+
+}
+
+// -------------------------------
+// Script Access Modal
+// -------------------------------
+
+let accessModalUsers = [];
+
+function accessCountLabel(scriptKey){
+
+    const total = accessModalUsers.length;
+
+    const allowed = accessModalUsers.filter(
+
+        user => getEffectiveScripts(user).includes(scriptKey)
+
+    ).length;
+
+    return allowed + " / " + total;
+
+}
+
+function updateAccessCount(scriptKey){
+
+    const el = document.getElementById("accessCountLive");
+
+    if(!el) return;
+
+    const boxes = document.querySelectorAll(
+
+        "#accessUserList input[type=checkbox]"
+
+    );
+
+    const checked = Array.from(boxes).filter(b => b.checked).length;
+
+    el.textContent = checked + " / " + boxes.length;
+
+}
+
+function accessUserRow(user, scriptKey){
+
+    const checked = getEffectiveScripts(user).includes(scriptKey) ? "checked" : "";
+
+    return `
+<label class="script-check" data-username="${user.username.toLowerCase()}">
+<input type="checkbox" data-token="${user.key}" ${checked}>
+<span>${user.username}</span>
+</label>
+`;
+
+}
+
+async function openAccessModal(scriptKey){
+
+    try{
+
+        const res = await api("/users");
+
+        accessModalUsers = res.users || [];
+
+    }catch(err){
+
+        showToast(err.message);
+
+        return;
+
+    }
+
+    openModal(`
+
+<h2>Allowed Users</h2>
+
+<p class="field-hint">
+
+${scriptKey} — <span id="accessCountLive">${accessCountLabel(scriptKey)}</span> Users
+
+</p>
+
+<div class="form-group form-full">
+
+<input
+id="accessUserSearch"
+class="search-box"
+placeholder="Search user...">
+
+</div>
+
+<div class="form-group form-full">
+
+<div id="accessUserList" class="script-checklist">
+
+${accessModalUsers.map(user => accessUserRow(user, scriptKey)).join("")}
+
+</div>
+
+</div>
+
+<br>
+
+<div class="actions">
+
+<button
+class="btn btn-gold"
+onclick="saveScriptAccess('${scriptKey}')">
+
+Save
+
+</button>
+
+</div>
+
+`);
+
+document
+
+.getElementById("accessUserList")
+
+.addEventListener("change", () => updateAccessCount(scriptKey));
+
+document
+
+.getElementById("accessUserSearch")
+
+.oninput = function(){
+
+    const keyword = this.value.toLowerCase().trim();
+
+    document
+
+    .querySelectorAll("#accessUserList .script-check")
+
+    .forEach(row => {
+
+        row.style.display =
+
+            row.dataset.username.includes(keyword) ? "" : "none";
+
+    });
+
+};
+
+}
+
+async function saveScriptAccess(scriptKey){
+
+    const boxes = document.querySelectorAll(
+
+        "#accessUserList input[type=checkbox]"
+
+    );
+
+    const updates = [];
+
+    boxes.forEach(box => {
+
+        const user = accessModalUsers.find(u => u.key === box.dataset.token);
+
+        if(!user) return;
+
+        const effective = getEffectiveScripts(user);
+
+        const wasChecked = effective.includes(scriptKey);
+
+        if(box.checked === wasChecked) return;
+
+        const updated = box.checked
+
+            ? (effective.includes(scriptKey) ? effective : [...effective, scriptKey])
+
+            : effective.filter(s => s !== scriptKey);
+
+        updates.push(
+
+            api("/edituser", {
+
+                method: "POST",
+
+                body: JSON.stringify({
+
+                    token: user.key,
+
+                    scripts: updated
+
+                })
+
+            })
+
+        );
+
+    });
+
+    if(!updates.length){
+
+        showToast("No changes to save");
+
+        closeModal();
+
+        return;
+
+    }
+
+    try{
+
+        await Promise.all(updates);
+
+        showToast(updates.length + " user(s) updated");
+
+        closeModal();
 
     }catch(err){
 
