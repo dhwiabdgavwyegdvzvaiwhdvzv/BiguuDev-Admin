@@ -401,12 +401,111 @@ document
 .onclick=loadScripts;
 
 // =====================================
+// Login Gate
+// =====================================
+// Client-side only: this gates the UI shell for convenience. The actual
+// security boundary is still the ADMIN_KEY the Admin Worker checks on
+// every API call — this password is visible to anyone who reads this file.
+
+const ADMIN_PASSWORD = "Ranuubiguu2004zZ";
+const RESET_KEY = "4672";
+const AUTH_STORAGE_KEY = "biguudev_admin_auth";
+
+function isAuthenticated(){
+
+    return localStorage.getItem(AUTH_STORAGE_KEY) === "1";
+
+}
+
+function showLoginError(message){
+
+    const el = document.getElementById("loginError");
+
+    if(el) el.textContent = message;
+
+}
+
+function toggleForgotPassword(){
+
+    const section = document.getElementById("loginResetSection");
+
+    if(section) section.classList.toggle("show");
+
+}
+
+function attemptLogin(){
+
+    const input = document.getElementById("loginPassword");
+
+    if(input.value === ADMIN_PASSWORD){
+
+        grantAccess();
+
+    }else{
+
+        showLoginError("Incorrect password");
+
+    }
+
+}
+
+function attemptReset(){
+
+    const input = document.getElementById("loginResetKey");
+
+    if(input.value.trim() === RESET_KEY){
+
+        grantAccess();
+
+        setTimeout(()=>{
+
+            showToast("Your password is: " + ADMIN_PASSWORD);
+
+        },400);
+
+    }else{
+
+        showLoginError("Incorrect reset key");
+
+    }
+
+}
+
+function grantAccess(){
+
+    localStorage.setItem(AUTH_STORAGE_KEY, "1");
+
+    const gate = document.getElementById("loginGate");
+
+    if(gate) gate.style.display = "none";
+
+    loadDashboard();
+
+}
+
+function logoutAdmin(){
+
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+
+    location.reload();
+
+}
+
+// =====================================
 // Start
 // =====================================
 
 createToast();
 
-loadDashboard();
+if(isAuthenticated()){
+
+    const gate = document.getElementById("loginGate");
+
+    if(gate) gate.style.display = "none";
+
+    loadDashboard();
+
+}
 // =====================================
 // BiguuDev Admin Panel v2
 // app.js
@@ -1993,6 +2092,12 @@ function startClock(){
 
 async function refreshStatistics(){
 
+    if(!isAuthenticated()){
+
+        return;
+
+    }
+
     if(pageTitle.textContent!=="Statistics"){
 
         return;
@@ -2008,6 +2113,12 @@ async function refreshStatistics(){
 // -------------------------------------
 
 async function refreshDashboard(){
+
+    if(!isAuthenticated()){
+
+        return;
+
+    }
 
     if(pageTitle.textContent!=="Dashboard"){
 
@@ -2812,6 +2923,8 @@ window.addEventListener(
     "load",
 
     ()=>{
+
+        if(!isAuthenticated()) return;
 
         const last=
 
