@@ -3045,10 +3045,35 @@ let html = `
 
 <label>JS File</label>
 
+<div
+class="dropzone"
+id="scriptDropzone"
+onclick="document.getElementById('newScriptFile').click()"
+ondragover="event.preventDefault(); this.classList.add('dragover');"
+ondragleave="this.classList.remove('dragover');"
+ondrop="handleScriptDrop(event)">
+
 <input
 id="newScriptFile"
 type="file"
-accept=".js">
+accept=".js"
+style="display:none"
+onchange="handleScriptFileSelected()">
+
+<div class="dropzone-icon">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+<path d="M12 12v9"/>
+<path d="m16 16-4-4-4 4"/>
+</svg>
+</div>
+
+<div class="dropzone-text">
+<span id="scriptDropLabel">Drop script here or click to browse</span>
+<small>.js files only</small>
+</div>
+
+</div>
 
 <small class="field-hint">The filename becomes the KV key exactly as-is.</small>
 
@@ -3061,6 +3086,12 @@ accept=".js">
 <button
 class="btn btn-gold"
 onclick="uploadNewScript()">
+
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+<path d="M12 3v12"/>
+<path d="m7 8 5-5 5 5"/>
+<path d="M5 21h14"/>
+</svg>
 
 Upload Script
 
@@ -3132,6 +3163,38 @@ onchange="handleReplaceFileChosen()">
 `;
 
 app.innerHTML = html;
+
+}
+
+function updateScriptDropLabel(name){
+
+    const label = document.getElementById("scriptDropLabel");
+
+    if(label) label.textContent = name;
+
+}
+
+function handleScriptFileSelected(){
+
+    const file = document.getElementById("newScriptFile").files[0];
+
+    if(file) updateScriptDropLabel(file.name);
+
+}
+
+function handleScriptDrop(event){
+
+    event.preventDefault();
+
+    event.currentTarget.classList.remove("dragover");
+
+    const file = event.dataTransfer.files[0];
+
+    if(!file) return;
+
+    document.getElementById("newScriptFile").files = event.dataTransfer.files;
+
+    updateScriptDropLabel(file.name);
 
 }
 
