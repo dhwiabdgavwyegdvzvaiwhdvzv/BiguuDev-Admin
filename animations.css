@@ -1,0 +1,50 @@
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+@keyframes slideIn {
+from { transform: translateX(-20px); opacity: 0; }
+to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideUp {
+from { transform: translateY(20px); opacity: 0; }
+to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+0% { background-position: -1000px 0; }
+100% { background-position: 1000px 0; }
+}
+
+.animate-fade { animation: fadeIn 0.3s ease; }
+.animate-slide { animation: slideIn 0.3s ease; }
+.animate-slideup { animation: slideUp 0.3s ease; }
+.animate-pulse { animation: pulse 2s infinite; }
+
+.page { animation: fadeIn 0.3s ease; }
+
+.btn-primary { transition: all 0.2s ease; }
+.btn-primary:active { transform: scale(0.95); }
+
+.card { transition: all 0.3s ease; }
+.card:hover { transform: translateY(-2px); }
+
+.user-card { transition: all 0.3s ease; }
+.user-card:active { transform: scale(0.98); }
+
+.stat-card { transition: all 0.3s ease; }
+.stat-card:hover { transform: translateY(-4px); }
+
+@keyframes glowPulse {
+0%, 100% { box-shadow: 0 0 8px rgba(34, 229, 255, 0.5); }
+50% { box-shadow: 0 0 14px rgba(34, 229, 255, 0.9); }
+}
+
+.activity-dot { animation: glowPulse 2.4s ease-in-out infinite; }
