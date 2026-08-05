@@ -1,0 +1,1977 @@
+const API = "https://biguudev-admin-v2.biguudev.workers.dev";
+const WORKER_BASE_URL = "https://vmc.biguudev.workers.dev";
+const ADMIN_KEY = new URLSearchParams(location.search).get("key");
+const app = document.getElementById("app");
+const pageTitle = document.getElementById("pageTitle");
+const state = {
+    users: [],
+    statistics: {},
+    settings: {},
+    currentUser: null,
+    loading: false
+};
+
+async function api(path, options = {}) {
+    const connector = path.includes("?") ? "&" : "?";
+    const response = await fetch(
+        API + path + connector + "key=" + encodeURIComponent(ADMIN_KEY),
+        {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            ...options
+        }
+    );
+    let data;
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error(await response.text());
+    }
+    if (!response.ok) {
+        throw new Error(
+            data.message ||
+            "Server Error"
+        );
+    }
+    return data;
+}
+
+function unixToDate(time){
+    if(!time) return "-";
+    return new Date(time*1000)
+        .toLocaleString();
+}
+
+function showLoader(){
+    app.innerHTML=`
+<div class="loader"></div>
+`;
+}
+
+function showError(text){
+    app.innerHTML=`
+<div class="empty">
+${text}
+</div>
+`;
+}
+
+function setActive(id){
+    document
+    .querySelectorAll(".menu button")
+    .forEach(btn=>{
+        btn.classList.remove("active");
+    });
+    document
+    .getElementById(id)
+    .classList.add("active");
+}
+let toast;
+
+function createToast(){
+    toast=document.createElement("div");
+    toast.className="toast";
+    document.body.appendChild(toast);
+}
+
+function showToast(message){
+    if(!toast){
+        createToast();
+    }
+    toast.textContent=message;
+    toast.classList.add("show");
+    clearTimeout(
+        toast.timer
+    );
+    toast.timer=setTimeout(()=>{
+        toast.classList.remove("show");
+    },3000);
+}
+
+function confirmAction(message){
+    return confirm(message);
+}
+
+async function fetchScriptList(){
+    try{
+        const res = await api("/scripts");
+        return res.scripts || [];
+    }catch(err){
+        return [];
+    }
+}
+
+function getEffectiveScripts(user){
+    return Array.isArray(user.scripts) ? user.scripts : ["VMC.js"];
+}
+
+function renderScriptCheckboxes(allScripts, selected){
+    const list = getEffectiveScripts({scripts: selected});
+    if(!allScripts.length){
+        return `<p class="field-hint">No scripts uploaded yet. Upload one from the Scripts page.</p>`;
+    }
+    let html = `<div class="script-checklist">`;
+    allScripts.forEach(name=>{
+        const checked = list.includes(name) ? "checked" : "";
+        html += `
+<label class="script-check">
+<input type="checkbox" value="${name}" ${checked}>
+<span>${name}</span>
+</label>
+`;
+    });
+    html += `</div>`;
+    return html;
+}
+
+function collectCheckedScripts(containerEl){
+    return Array.from(
+        containerEl.querySelectorAll(".script-checklist input[type=checkbox]:checked")
+    ).map(el => el.value);
+}
+
+async function loadDashboard(){
+    pageTitle.textContent="Dashboard";
+    setActive("btnDashboard");
+    showLoader();
+    try{
+        const data=
+        await api("/statistics");
+        state.statistics=data;
+        app.innerHTML=`
+<div class="cards">
+<div class="card">
+<div class="card-title">
+Total Users
+</div>
+<div class="card-value">
+${data.totalUsers}
+</div>
+</div>
+<div class="card">
+<div class="card-title">
+Active
+</div>
+<div class="card-value">
+${data.activeUsers}
+</div>
+</div>
+<div class="card">
+<div class="card-title">
+Disabled
+</div>
+<div class="card-value">
+${data.disabledUsers}
+</div>
+</div>
+<div class="card">
+<div class="card-title">
+Expired
+</div>
+<div class="card-value">
+${data.expiredUsers}
+</div>
+</div>
+</div>
+`;
+    }
+    catch(err){
+        showError(err.message);
+    }
+}
+document
+.getElementById("btnDashboard")
+.onclick=loadDashboard;
+document
+.getElementById("btnUsers")
+.onclick=loadUsers;
+document
+.getElementById("btnAdd")
+.onclick=loadAddUser;
+document
+.getElementById("btnStatistics")
+.onclick=loadStatistics;
+document
+.getElementById("btnSettings")
+.onclick=loadSettings;
+document
+.getElementById("btnScripts")
+.onclick=loadScripts;
+const ADMIN_PASSWORD = "Ranuubiguu2004zZ";
+const RESET_KEY = "4672";
+const AUTH_STORAGE_KEY = "biguudev_admin_auth";
+
+function isAuthenticated(){
+    return localStorage.getItem(AUTH_STORAGE_KEY) === "1";
+}
+
+function showLoginError(message){
+    const el = document.getElementById("loginError");
+    if(el) el.textContent = message;
+}
+
+function toggleForgotPassword(){
+    const section = document.getElementById("loginResetSection");
+    if(section) section.classList.toggle("show");
+}
+
+function attemptLogin(){
+    const input = document.getElementById("loginPassword");
+    if(input.value === ADMIN_PASSWORD){
+        grantAccess();
+    }else{
+        showLoginError("Incorrect password");
+    }
+}
+
+function attemptReset(){
+    const input = document.getElementById("loginResetKey");
+    if(input.value.trim() === RESET_KEY){
+        grantAccess();
+        setTimeout(()=>{
+            showToast("Your password is: " + ADMIN_PASSWORD);
+        },400);
+    }else{
+        showLoginError("Incorrect reset key");
+    }
+}
+
+function grantAccess(){
+    localStorage.setItem(AUTH_STORAGE_KEY, "1");
+    const gate = document.getElementById("loginGate");
+    if(gate) gate.style.display = "none";
+    loadDashboard();
+}
+
+function logoutAdmin(){
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    location.reload();
+}
+createToast();
+if(isAuthenticated()){
+    const gate = document.getElementById("loginGate");
+    if(gate) gate.style.display = "none";
+    loadDashboard();
+}
+
+function statusBadge(status){
+    if(status==="active"){
+        return `<span class="badge active">Active</span>`;
+    }
+    if(status==="disabled"){
+        return `<span class="badge disabled">Disabled</span>`;
+    }
+    return `<span class="badge expired">Expired</span>`;
+}
+
+function userRow(user){
+const riskBadge = user.risk ? `<span class="badge risk">RISK</span>` : "";
+const lockBadge = user.lock ? `<span class="badge risk">LOCKED</span>` : "";
+const ipSummary = user.ip1
+    ? `${user.ip1}${user.ip2 ? " +1" : ""}`
+    : "-";
+return `
+<tr>
+<td data-label="Username">${user.username} ${lockBadge}${riskBadge}</td>
+<td data-label="Status">${statusBadge(user.status)}</td>
+<td data-label="Expire">${unixToDate(user.expire)}</td>
+<td data-label="Last Seen">${unixToDate(user.lastSeen)}</td>
+<td data-label="IP">${ipSummary}</td>
+<td data-label="Actions">
+<div class="actions">
+<button
+class="btn btn-blue"
+onclick="viewUser('${user.key}')">
+View
+</button>
+<button
+class="btn btn-blue"
+onclick="editUser('${user.key}')">
+Edit
+</button>
+<button
+class="btn btn-green"
+onclick="enableUser('${user.key}')">
+Enable
+</button>
+<button
+class="btn btn-gray"
+onclick="disableUser('${user.key}')">
+Disable
+</button>
+<button
+class="btn btn-red"
+onclick="deleteUser('${user.key}')">
+Delete
+</button>
+</div>
+</td>
+</tr>
+`;
+}
+
+async function loadUsers(){
+pageTitle.textContent="Users";
+setActive("btnUsers");
+showLoader();
+try{
+const res=await api("/users");
+state.users=res.users||[];
+renderUsers(state.users);
+}catch(err){
+showError(err.message);
+}
+}
+
+function renderUsers(users){
+let html=`
+<div class="toolbar">
+<input
+id="searchUser"
+class="search-box"
+placeholder="Search user...">
+<button
+class="btn btn-gold"
+onclick="refreshUsers()">
+Refresh
+</button>
+</div>
+<div class="table-container">
+<table class="table-cards">
+<thead>
+<tr>
+<th>Username</th>
+<th>Status</th>
+<th>Expire</th>
+<th>Last Seen</th>
+<th>IP (1/2)</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+`;
+users.forEach(user=>{
+html+=userRow(user);
+});
+html+=`
+</tbody>
+</table>
+</div>
+`;
+app.innerHTML=html;
+document
+.getElementById("searchUser")
+.oninput=function(){
+const keyword=
+this.value
+.toLowerCase()
+.trim();
+const filtered=
+state.users.filter(user=>{
+return(
+user.username
+.toLowerCase()
+.includes(keyword)
+||
+(user.ip||"")
+.toLowerCase()
+.includes(keyword)
+);
+});
+renderUsers(filtered);
+};
+}
+
+async function refreshUsers(){
+showToast("Refreshing...");
+await loadUsers();
+}
+
+async function loadAddUser(){
+pageTitle.textContent="Add User";
+setActive("btnAdd");
+const expire=Math.floor(Date.now()/1000)+(30*24*60*60);
+showLoader();
+const allScripts = await fetchScriptList();
+app.innerHTML=`
+<div class="form-card">
+<h2>Create User</h2>
+<div class="form">
+<div class="form-group">
+<label>Username</label>
+<input
+id="username"
+type="text"
+placeholder="Username">
+</div>
+<div class="form-group">
+<label>Token</label>
+<input
+id="token"
+type="text"
+placeholder="Unique Token">
+</div>
+<div class="form-group">
+<label>Expire (Unix)</label>
+<input
+id="expire"
+type="number"
+value="${expire}">
+</div>
+<div class="form-group form-full">
+<label>Allowed Scripts</label>
+${renderScriptCheckboxes(allScripts, [])}
+</div>
+<div class="form-group">
+<label>&nbsp;</label>
+<button
+class="btn btn-gold"
+onclick="createUser()">
+Create User
+</button>
+</div>
+</div>
+<div id="createResult"></div>
+</div>
+`;
+}
+
+async function createUser(){
+const username=
+document
+.getElementById("username")
+.value.trim();
+const token=
+document
+.getElementById("token")
+.value.trim();
+const expire=
+Number(
+document
+.getElementById("expire")
+.value
+);
+if(!username){
+showToast("Username required");
+return;
+}
+if(!token){
+showToast("Token required");
+return;
+}
+if(!expire){
+showToast("Expire required");
+return;
+}
+const scripts = collectCheckedScripts(app);
+try{
+showToast("Creating...");
+const result=
+await api(
+"/adduser",
+{
+method:"POST",
+body:JSON.stringify({
+username,
+token,
+expire,
+scripts
+})
+}
+);
+showToast(result.message);
+setTimeout(()=>{
+loadUsers();
+},500);
+}catch(err){
+showToast(err.message);
+}
+}
+
+async function enableUser(id){
+if(
+!confirmAction(
+"Enable this user?"
+)
+) return;
+try{
+const result=
+await api(
+"/enable?id="+
+encodeURIComponent(id),
+{
+method:"POST"
+}
+);
+showToast(result.message);
+refreshUsers();
+}catch(err){
+showToast(err.message);
+}
+}
+
+async function disableUser(id){
+if(
+!confirmAction(
+"Disable this user?"
+)
+) return;
+try{
+const result=
+await api(
+"/disable?id="+
+encodeURIComponent(id),
+{
+method:"POST"
+}
+);
+showToast(result.message);
+refreshUsers();
+}catch(err){
+showToast(err.message);
+}
+}
+
+async function deleteUser(id){
+if(
+!confirmAction(
+"Delete this user?"
+)
+) return;
+try{
+const result=
+await api(
+"/delete?id="+
+encodeURIComponent(id),
+{
+method:"POST"
+}
+);
+showToast(result.message);
+refreshUsers();
+}catch(err){
+showToast(err.message);
+}
+}
+
+async function resetIP(id){
+if(
+!confirmAction(
+"Reset all security bindings (IPs, ASN, Country, Device) for this user?"
+)
+) return;
+try{
+const result=
+await api(
+"/resetsecurity?id="+
+encodeURIComponent(id),
+{
+method:"POST"
+}
+);
+showToast(result.message);
+closeModal();
+refreshUsers();
+}catch(err){
+showToast(err.message);
+}
+}
+
+async function lockUser(id){
+if(!confirmAction("Lock this user? All script access will be blocked immediately.")) return;
+try{
+const result = await api("/lockuser?id="+encodeURIComponent(id), { method:"POST" });
+showToast(result.message);
+closeModal();
+refreshUsers();
+}catch(err){
+showToast(err.message);
+}
+}
+
+async function unlockUser(id){
+if(!confirmAction("Unlock this user? Bound IPs/device stay the same, only the lock and risk flag clear.")) return;
+try{
+const result = await api("/unlockuser?id="+encodeURIComponent(id), { method:"POST" });
+showToast(result.message);
+closeModal();
+refreshUsers();
+}catch(err){
+showToast(err.message);
+}
+}
+
+async function changeKeyPrompt(id){
+const newKey = prompt("Enter the new key for this user:\n\n(Security bindings — IPs, ASN, device — reset fresh under the new key.)");
+if(!newKey || !newKey.trim()) return;
+if(!confirmAction("Change key to \""+newKey.trim()+"\"? This cannot be undone.")) return;
+try{
+const result = await api("/changekey", {
+method:"POST",
+body: JSON.stringify({ oldToken:id, newToken:newKey.trim() })
+});
+showToast(result.message);
+closeModal();
+refreshUsers();
+}catch(err){
+showToast(err.message);
+}
+}
+
+async function editUser(id){
+let data, allScripts;
+try{
+[data, allScripts] = await Promise.all([
+api("/user?id="+encodeURIComponent(id)),
+fetchScriptList()
+]);
+}catch(err){
+showToast(err.message);
+return;
+}
+const user=data.profile;
+const isLegacy = user.scripts == null;
+openModal(`
+<h2>Edit User</h2>
+<div class="form">
+<div class="form-group form-full">
+<label>Username</label>
+<input id="editUsername" type="text" value="${user.username}">
+</div>
+<div class="form-group form-full">
+<label>Expire (Unix)</label>
+<input id="editExpire" type="number" value="${user.expire}">
+</div>
+<div class="form-group form-full">
+<label>Allowed Scripts</label>
+${isLegacy ? `<p class="field-hint">No scripts saved yet for this user — currently running on the legacy default (VMC.js).</p>` : ""}
+${renderScriptCheckboxes(allScripts, user.scripts)}
+</div>
+</div>
+<br>
+<div class="actions">
+<button
+class="btn btn-gold"
+onclick="saveEditUser('${id}')">
+Save Changes
+</button>
+</div>
+`);
+}
+
+async function saveEditUser(id){
+const username=
+document.getElementById("editUsername").value.trim();
+const expire=
+Number(document.getElementById("editExpire").value);
+if(!username){
+showToast("Username required");
+return;
+}
+if(!expire){
+showToast("Expire required");
+return;
+}
+const scripts=
+collectCheckedScripts(document.getElementById("modalContent"));
+try{
+const result=
+await api(
+"/edituser",
+{
+method:"POST",
+body:JSON.stringify({
+token:id,
+username,
+expire,
+scripts
+})
+}
+);
+showToast(result.message);
+closeModal();
+refreshUsers();
+}catch(err){
+showToast(err.message);
+}
+}
+
+async function loadStatistics(){
+    pageTitle.textContent="Statistics";
+    setActive("btnStatistics");
+    showLoader();
+    try{
+        const stats=await api("/statistics");
+        state.statistics=stats;
+        app.innerHTML=`
+<div class="cards">
+<div class="card">
+<div class="card-title">
+Total Users
+</div>
+<div class="card-value">
+${stats.totalUsers}
+</div>
+</div>
+<div class="card">
+<div class="card-title">
+Active Users
+</div>
+<div class="card-value">
+${stats.activeUsers}
+</div>
+</div>
+<div class="card">
+<div class="card-title">
+Disabled Users
+</div>
+<div class="card-value">
+${stats.disabledUsers}
+</div>
+</div>
+<div class="card">
+<div class="card-title">
+Expired Users
+</div>
+<div class="card-value">
+${stats.expiredUsers}
+</div>
+</div>
+</div>
+<br>
+<div class="table-container">
+<table>
+<tr>
+<th>Server Time</th>
+<td>${unixToDate(stats.serverTime)}</td>
+</tr>
+<tr>
+<th>Total Accounts</th>
+<td>${stats.totalUsers}</td>
+</tr>
+<tr>
+<th>Enabled</th>
+<td>${stats.activeUsers}</td>
+</tr>
+<tr>
+<th>Disabled</th>
+<td>${stats.disabledUsers}</td>
+</tr>
+<tr>
+<th>Expired</th>
+<td>${stats.expiredUsers}</td>
+</tr>
+</table>
+</div>
+`;
+    }
+    catch(err){
+        showError(err.message);
+    }
+}
+
+async function loadSettings(){
+    pageTitle.textContent="Settings";
+    setActive("btnSettings");
+    showLoader();
+    try{
+        const res=await api("/settings");
+        state.settings=res.settings;
+        app.innerHTML=`
+<div class="form-card">
+<h2>Panel Settings</h2>
+<div class="form">
+<div class="form-group">
+<label>Panel Name</label>
+<input
+id="panelName"
+value="${res.settings.panelName}">
+</div>
+<div class="form-group">
+<label>Default Expire Days</label>
+<input
+id="expireDays"
+type="number"
+value="${res.settings.defaultExpireDays}">
+</div>
+<div class="form-group">
+<label>Maintenance</label>
+<select id="maintenance">
+<option value="false">
+Disabled
+</option>
+<option value="true"
+${res.settings.maintenance?"selected":""}>
+Enabled
+</option>
+</select>
+</div>
+<div class="form-group">
+<label>Allow Registration</label>
+<select id="registration">
+<option value="true"
+${res.settings.allowRegistration?"selected":""}>
+Yes
+</option>
+<option value="false"
+${!res.settings.allowRegistration?"selected":""}>
+No
+</option>
+</select>
+</div>
+<div class="form-full">
+<button
+class="btn btn-gold"
+onclick="saveSettings()">
+Save Settings
+</button>
+</div>
+</div>
+</div>
+`;
+    }
+    catch(err){
+        showError(err.message);
+    }
+}
+
+async function saveSettings(){
+try{
+const body={
+panelName:
+document
+.getElementById("panelName")
+.value,
+maintenance:
+document
+.getElementById("maintenance")
+.value==="true",
+allowRegistration:
+document
+.getElementById("registration")
+.value==="true",
+defaultExpireDays:
+Number(
+document
+.getElementById("expireDays")
+.value
+),
+version:"2.0"
+};
+const result=
+await api(
+"/settings",
+{
+method:"POST",
+body:JSON.stringify(body)
+}
+);
+showToast(result.message);
+}
+catch(err){
+showToast(err.message);
+}
+}
+
+async function downloadBackup(){
+try{
+const backup=
+await api("/backup");
+const blob=new Blob(
+[
+JSON.stringify(
+backup,
+null,
+2
+)
+],
+{
+type:"application/json"
+}
+);
+const a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="BiguuDevBackup.json";
+a.click();
+URL.revokeObjectURL(a.href);
+showToast("Backup Downloaded");
+}
+catch(err){
+showToast(err.message);
+}
+}
+
+async function serverInfo(){
+try{
+const info=
+await api("/server");
+alert(
+JSON.stringify(
+info,
+null,
+2
+)
+);
+}
+catch(err){
+showToast(err.message);
+}
+}
+document.addEventListener(
+"keydown",
+e=>{
+if(e.ctrlKey && e.key==="r"){
+e.preventDefault();
+refreshUsers();
+}
+if(e.ctrlKey && e.key==="d"){
+e.preventDefault();
+loadDashboard();
+}
+if(e.ctrlKey && e.key==="u"){
+e.preventDefault();
+loadUsers();
+}
+}
+);
+console.log(
+"%cBiguuDev Admin Panel v2",
+"color:#D4AF37;font-size:18px;font-weight:bold;"
+);
+console.log("App Loaded Successfully.");
+
+function generateToken(length = 32){
+    const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let token = "";
+    for(let i=0;i<length;i++){
+        token += chars.charAt(
+            Math.floor(Math.random()*chars.length)
+        );
+    }
+    return token;
+}
+window.generateToken = generateToken;
+
+function randomToken(){
+    const input =
+        document.getElementById("token");
+    if(!input) return;
+    input.value = generateToken();
+}
+
+async function copyText(text){
+    try{
+        await navigator.clipboard.writeText(text);
+        showToast("Copied");
+    }
+    catch{
+        showToast("Copy Failed");
+    }
+}
+
+function exportCSV(){
+    if(!state.users.length){
+        showToast("No Users");
+        return;
+    }
+    const rows = [
+        [
+            "Username",
+            "Status",
+            "Expire",
+            "Last Seen",
+            "IP"
+        ]
+    ];
+    state.users.forEach(user=>{
+        rows.push([
+            user.username,
+            user.status,
+            unixToDate(user.expire),
+            unixToDate(user.lastSeen),
+            user.ip
+        ]);
+    });
+    const csv = rows
+        .map(r=>r.join(","))
+        .join("\n");
+    const blob = new Blob(
+        [csv],
+        {
+            type:"text/csv"
+        }
+    );
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "users.csv";
+    a.click();
+}
+
+function animateCards(){
+    document
+    .querySelectorAll(".card")
+    .forEach((card,index)=>{
+        card.style.opacity="0";
+        card.style.transform="translateY(15px)";
+        setTimeout(()=>{
+            card.style.transition=".3s";
+            card.style.opacity="1";
+            card.style.transform="translateY(0px)";
+        },index*80);
+    });
+}
+
+function toggleTheme(){
+    document.body.classList.toggle(
+        "light"
+    );
+    showToast("Theme Changed");
+}
+
+function startClock(){
+}
+
+async function refreshStatistics(){
+    if(!isAuthenticated()){
+        return;
+    }
+    if(pageTitle.textContent!=="Statistics"){
+        return;
+    }
+    await loadStatistics();
+}
+
+async function refreshDashboard(){
+    if(!isAuthenticated()){
+        return;
+    }
+    if(pageTitle.textContent!=="Dashboard"){
+        return;
+    }
+    await loadDashboard();
+}
+document.addEventListener(
+    "DOMContentLoaded",
+    ()=>{
+    }
+);
+console.log("Premium Module Loaded");
+let modal=null;
+
+function createModal(){
+    if(modal) return;
+    modal=document.createElement("div");
+    modal.className="modal";
+    modal.innerHTML=`
+<div class="modal-box">
+<div id="modalContent"></div>
+<br>
+<div style="display:flex;justify-content:flex-end;gap:10px;">
+<button
+class="btn btn-gray"
+onclick="closeModal()">
+Close
+</button>
+</div>
+</div>
+`;
+    document.body.appendChild(modal);
+}
+
+function openModal(html){
+    createModal();
+    document
+    .getElementById("modalContent")
+    .innerHTML=html;
+    modal.classList.add("show");
+}
+
+function closeModal(){
+    if(modal){
+        modal.classList.remove("show");
+    }
+}
+
+async function viewUser(id){
+    try{
+        const res=await api(
+            "/user?id="+
+            encodeURIComponent(id)
+        );
+        const p=res.profile;
+        const s=res.security;
+        const riskRows = (Array.isArray(s.riskEvents) && s.riskEvents.length)
+            ? s.riskEvents.map(ev => `
+<tr class="risk-row">
+<td>${unixToDate(ev.time)}</td>
+<td>${ev.ip||"-"}</td>
+<td>${ev.asn||"-"}</td>
+<td>${ev.country||"-"}</td>
+<td>${ev.reason||"-"}</td>
+</tr>`).join("")
+            : `<tr><td colspan="5" style="text-align:center;opacity:0.6;">No risk events</td></tr>`;
+        openModal(`
+<h2>${p.username}</h2>
+<table style="width:100%;">
+<tr><td>Status</td><td>${p.status}</td></tr>
+<tr><td>Expire</td><td>${unixToDate(p.expire)}</td></tr>
+<tr><td>Created</td><td>${unixToDate(p.created)}</td></tr>
+<tr><td>Last Seen</td><td>${unixToDate(p.lastSeen)}</td></tr>
+<tr><td>Scripts</td><td>${(p.scripts && p.scripts.length) ? p.scripts.join(", ") : "VMC.js (default)"}</td></tr>
+<tr><td colspan="2"><b>Security Lock</b></td></tr>
+<tr><td>IP #1</td><td>${s.ip1||"-"} ${s.ip1Asn?`(ASN ${s.ip1Asn}, ${s.ip1Country||"-"})`:""}</td></tr>
+<tr><td>IP #2</td><td>${s.ip2||"-"} ${s.ip2Asn?`(ASN ${s.ip2Asn}, ${s.ip2Country||"-"})`:""}</td></tr>
+<tr><td>Shadowrocket Device</td><td>${s.uaDevice||"-"}</td></tr>
+<tr><td>Locked</td><td>${s.lock?`<span class="badge risk">LOCKED</span>`:"No"}</td></tr>
+<tr><td>Risk Flag</td><td>${s.risk?`<span class="badge risk">AT RISK</span>`:"Clean"}</td></tr>
+</table>
+<br>
+<h3 style="margin:0 0 8px;font-size:14px;">Recent Risk Events</h3>
+<table style="width:100%;font-size:12px;">
+<thead><tr><th>Time</th><th>IP</th><th>ASN</th><th>Country</th><th>Reason</th></tr></thead>
+<tbody>${riskRows}</tbody>
+</table>
+<br>
+<div class="actions">
+<button class="btn btn-blue" onclick="copyText('${id}')">Copy Token</button>
+<button class="btn btn-blue" onclick="changeKeyPrompt('${id}')">Change Key</button>
+<button class="btn btn-green" onclick="resetIP('${id}')">Reset Security</button>
+${s.lock
+    ? `<button class="btn btn-green" onclick="unlockUser('${id}')">Unlock</button>`
+    : `<button class="btn btn-red" onclick="lockUser('${id}')">Lock</button>`
+}
+</div>
+`);
+    }
+    catch(err){
+        showToast(err.message);
+    }
+}
+let sortDirection=true;
+
+function sortUsers(field){
+    state.users.sort((a,b)=>{
+        let x=a[field];
+        let y=b[field];
+        if(typeof x==="string"){
+            x=x.toLowerCase();
+            y=y.toLowerCase();
+        }
+        if(x<y) return sortDirection?-1:1;
+        if(x>y) return sortDirection?1:-1;
+        return 0;
+    });
+    sortDirection=!sortDirection;
+    renderUsers(state.users);
+}
+let currentPage=1;
+const rowsPerPage=10;
+
+function renderPagedUsers(){
+    const start=
+        (currentPage-1)
+        *rowsPerPage;
+    const end=
+        start+rowsPerPage;
+    renderUsers(
+        state.users.slice(start,end)
+    );
+}
+
+function nextPage(){
+    if(
+        currentPage*
+        rowsPerPage
+        <
+        state.users.length
+    ){
+        currentPage++;
+        renderPagedUsers();
+    }
+}
+
+function prevPage(){
+    if(currentPage>1){
+        currentPage--;
+        renderPagedUsers();
+    }
+}
+
+function quickSearch(keyword){
+    keyword=
+    keyword
+    .toLowerCase()
+    .trim();
+    const filtered=
+    state.users.filter(u=>{
+        return(
+            u.username
+            .toLowerCase()
+            .includes(keyword)
+            ||
+            (u.ip||"")
+            .toLowerCase()
+            .includes(keyword)
+            ||
+            u.status
+            .toLowerCase()
+            .includes(keyword)
+        );
+    });
+    renderUsers(filtered);
+}
+
+function reloadCurrentPage(){
+    switch(
+        pageTitle.textContent
+    ){
+        case"Dashboard":
+            loadDashboard();
+            break;
+        case"Users":
+            loadUsers();
+            break;
+        case"Statistics":
+            loadStatistics();
+            break;
+        case"Settings":
+            loadSettings();
+            break;
+    }
+}
+window.addEventListener(
+    "focus",
+    ()=>{
+        reloadCurrentPage();
+    }
+);
+window.addEventListener(
+    "keydown",
+    e=>{
+        if(
+            e.key==="Escape"
+        ){
+            closeModal();
+        }
+    }
+);
+console.log(
+"Premium UI Loaded"
+);
+const notifications=[];
+
+function notify(title,message,type="info"){
+    notifications.unshift({
+        title,
+        message,
+        type,
+        time:new Date().toLocaleTimeString()
+    });
+    if(notifications.length>50){
+        notifications.pop();
+    }
+    showToast(title);
+}
+
+function showNotifications(){
+    let html="<h2>Notifications</h2>";
+    if(!notifications.length){
+        html+="<p>No notifications.</p>";
+    }else{
+        html+="<div>";
+        notifications.forEach(item=>{
+            html+=`
+<div class="card" style="margin-bottom:10px;">
+<b>${item.title}</b>
+<br>
+${item.message}
+<br>
+<small>${item.time}</small>
+</div>
+`;
+        });
+        html+="</div>";
+    }
+    openModal(html);
+}
+const activityLog=[];
+
+function logActivity(action,user="System"){
+    activityLog.unshift({
+        action,
+        user,
+        time:new Date().toLocaleString()
+    });
+    if(activityLog.length>200){
+        activityLog.pop();
+    }
+}
+
+function showLogs(){
+    let html="<h2>Activity Log</h2>";
+    html+="<table style='width:100%;'>";
+    html+="<tr><th>Time</th><th>User</th><th>Action</th></tr>";
+    activityLog.forEach(log=>{
+        html+=`
+<tr>
+<td>${log.time}</td>
+<td>${log.user}</td>
+<td>${log.action}</td>
+</tr>
+`;
+    });
+    html+="</table>";
+    openModal(html);
+}
+
+function drawDashboardChart(){
+    const canvas=document.getElementById("statsChart");
+    if(!canvas) return;
+    const ctx=canvas.getContext("2d");
+    const stats=state.statistics;
+    const values=[
+        stats.activeUsers||0,
+        stats.disabledUsers||0,
+        stats.expiredUsers||0
+    ];
+    const colors=[
+        "#22c55e",
+        "#ef4444",
+        "#f59e0b"
+    ];
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const max=Math.max(...values,1);
+    values.forEach((v,i)=>{
+        const h=(v/max)*180;
+        ctx.fillStyle=colors[i];
+        ctx.fillRect(
+            50+(i*90),
+            220-h,
+            55,
+            h
+        );
+    });
+}
+const session={
+    login:new Date(),
+    actions:0
+};
+
+function sessionAction(){
+    session.actions++;
+}
+
+function debounce(fn,delay){
+    let timer;
+    return(...args)=>{
+        clearTimeout(timer);
+        timer=setTimeout(()=>{
+            fn(...args);
+        },delay);
+    };
+}
+const smartSearch=debounce(function(value){
+    quickSearch(value);
+},250);
+
+async function checkServer(){
+    try{
+        await api("/");
+    }
+    catch{
+        notify(
+            "Server",
+            "Connection Lost",
+            "error"
+        );
+    }
+}
+setInterval(
+    checkServer,
+    120000
+);
+window.addEventListener(
+    "beforeunload",
+    ()=>{
+        localStorage.setItem(
+            "lastPage",
+            pageTitle.textContent
+        );
+    }
+);
+window.addEventListener(
+    "load",
+    ()=>{
+        if(!isAuthenticated()) return;
+        const last=
+        localStorage.getItem(
+            "lastPage"
+        );
+        switch(last){
+            case"Users":
+                loadUsers();
+                break;
+            case"Statistics":
+                loadStatistics();
+                break;
+            case"Settings":
+                loadSettings();
+                break;
+        }
+    }
+);
+notify(
+    "BiguuDev",
+    "Admin Panel Ready"
+);
+logActivity(
+    "Application Started"
+);
+console.clear();
+console.log(
+"%cBIGUUDEV ADMIN PANEL",
+"font-size:28px;font-weight:bold;color:#D4AF37;"
+);
+console.log(
+"%cProduction Build v2.0",
+"font-size:14px;color:#999;"
+);
+console.log(
+"Worker Connected ✔"
+);
+console.log(
+"KV Ready ✔"
+);
+console.log(
+"UI Ready ✔"
+);
+console.log(
+"Loaded Successfully."
+);
+const mobileMenu = document.getElementById("mobileMenu");
+const sidebar = document.querySelector(".sidebar");
+const overlay = document.getElementById("sidebarOverlay");
+
+function openSidebar() {
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
+    document.body.style.overflow = "hidden";
+}
+
+function closeSidebar() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+    document.body.style.overflow = "";
+}
+if (mobileMenu) {
+    mobileMenu.addEventListener("click", () => {
+        if (sidebar.classList.contains("open")) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+}
+if (overlay) {
+    overlay.addEventListener("click", closeSidebar);
+}
+document.querySelectorAll(".menu button").forEach(btn => {
+    btn.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+            closeSidebar();
+        }
+    });
+});
+window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) {
+        closeSidebar();
+    }
+});
+let replaceTargetKey = null;
+
+async function loadScripts(){
+    pageTitle.textContent = "Scripts";
+    setActive("btnScripts");
+    showLoader();
+    try{
+        const res = await api("/scripts");
+        renderScripts(res.scripts || []);
+    }catch(err){
+        showError(err.message);
+    }
+}
+
+function scriptRow(key){
+return `
+<tr>
+<td data-label="Key">${key}</td>
+<td data-label="Actions">
+<div class="actions">
+<button
+class="btn btn-blue"
+onclick="copyScriptUrl('${key}')">
+Copy URL
+</button>
+<button
+class="btn btn-blue"
+onclick="replaceScript('${key}')">
+Replace
+</button>
+<button
+class="btn btn-red"
+onclick="deleteScript('${key}')">
+Delete
+</button>
+<button
+class="btn btn-green"
+onclick="openAccessModal('${key}')">
+Access
+</button>
+</div>
+</td>
+</tr>
+`;
+}
+
+function copyScriptUrl(key){
+    const url = WORKER_BASE_URL + "/" + encodeURIComponent(key);
+    copyText(url);
+}
+
+function renderScripts(scripts){
+let html = `
+<div class="form-card">
+<h2>Upload Script</h2>
+<div class="form">
+<div class="form-group form-full">
+<label>JS File</label>
+<div
+class="dropzone"
+id="scriptDropzone"
+onclick="document.getElementById('newScriptFile').click()"
+ondragover="event.preventDefault(); this.classList.add('dragover');"
+ondragleave="this.classList.remove('dragover');"
+ondrop="handleScriptDrop(event)">
+<input
+id="newScriptFile"
+type="file"
+accept=".js"
+style="display:none"
+onchange="handleScriptFileSelected()">
+<div class="dropzone-icon">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+<path d="M12 12v9"/>
+<path d="m16 16-4-4-4 4"/>
+</svg>
+</div>
+<div class="dropzone-text">
+<span id="scriptDropLabel">Drop script here or click to browse</span>
+<small>.js files only</small>
+</div>
+</div>
+<small class="field-hint">The filename becomes the KV key exactly as-is.</small>
+</div>
+<div class="form-group">
+<label>&nbsp;</label>
+<button
+class="btn btn-gold"
+onclick="uploadNewScript()">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+<path d="M12 3v12"/>
+<path d="m7 8 5-5 5 5"/>
+<path d="M5 21h14"/>
+</svg>
+Upload Script
+</button>
+</div>
+</div>
+<small class="field-hint">Uploaded content is the RELAY LOGIC body — it must use <code>input.body</code>/<code>input.url</code> and end with <code>return</code>, not the old Shadowrocket $response/$done syntax. Have an old-format script? Use the converter below.</small>
+<br><br>
+<button class="btn btn-blue" onclick="openLegacyConvertModal()">Paste &amp; Convert Legacy Script</button>
+</div>
+<br>
+<div class="toolbar">
+<div></div>
+<button
+class="btn btn-gold"
+onclick="loadScripts()">
+Refresh
+</button>
+</div>
+<div class="table-container">
+<table class="table-cards">
+<thead>
+<tr>
+<th>Key</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+`;
+scripts.forEach(key=>{
+html += scriptRow(key);
+});
+html += `
+</tbody>
+</table>
+</div>
+<input
+type="file"
+id="replaceFileInput"
+accept=".js"
+style="display:none"
+onchange="handleReplaceFileChosen()">
+`;
+app.innerHTML = html;
+}
+
+function updateScriptDropLabel(name){
+    const label = document.getElementById("scriptDropLabel");
+    if(label) label.textContent = name;
+}
+
+function handleScriptFileSelected(){
+    const file = document.getElementById("newScriptFile").files[0];
+    if(file) updateScriptDropLabel(file.name);
+}
+
+function handleScriptDrop(event){
+    event.preventDefault();
+    event.currentTarget.classList.remove("dragover");
+    const file = event.dataTransfer.files[0];
+    if(!file) return;
+    document.getElementById("newScriptFile").files = event.dataTransfer.files;
+    updateScriptDropLabel(file.name);
+}
+
+function uploadNewScript(){
+    const file = document.getElementById("newScriptFile").files[0];
+    if(!file){
+        showToast("Please select a .js file");
+        return;
+    }
+    if(!file.name.toLowerCase().endsWith(".js")){
+        showToast("File must be a .js file");
+        return;
+    }
+    doScriptUpload(file.name, file);
+}
+
+function replaceScript(key){
+    replaceTargetKey = key;
+    document.getElementById("replaceFileInput").click();
+}
+
+function handleReplaceFileChosen(){
+    const file = document.getElementById("replaceFileInput").files[0];
+    if(!file) return;
+    doScriptUpload(replaceTargetKey, file);
+}
+
+function escapeHtml(str){
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+// Best-effort converter: old Shadowrocket ($response/$request/$done) syntax
+// -> new relay-logic format (input.body / input.url / return). This is a
+// mechanical find/replace, NOT a real JS parser — always review the output
+// (and the warnings list) before uploading, especially for scripts with
+// multiple $done() exit paths or async $httpClient calls inside them.
+function convertLegacyScript(code){
+    const warnings = [];
+    let out = code;
+
+    // Strip old client-side tamper-check pattern (meaningless server-side now)
+    out = out.replace(
+        /const\s+AUTHOR\s*=\s*["'][^"']*["'];?\s*\n?\s*if\s*\(\s*AUTHOR\s*!==?\s*["'][^"']*["']\s*\)\s*\$done\(\{\}\);?\s*\n?/g,
+        ""
+    );
+
+    const doneMatches = out.match(/\$done\s*\(/g) || [];
+    if(doneMatches.length > 1){
+        warnings.push("Found " + doneMatches.length + " separate $done() calls. Auto-convert only produces one final return per $done — if this script has multiple exit branches (conditionals), merge them manually and check the logic carefully.");
+    }
+
+    if(/\$httpClient|\$task\.fetch/.test(out)){
+        warnings.push("Detected $httpClient / $task.fetch inside this script. The /process endpoint must return synchronously — async network calls here are NOT auto-convertible and need manual rework.");
+    }
+
+    if(/\$response\.headers|\$request\.headers/.test(out)){
+        warnings.push("Detected $response.headers / $request.headers. The relay shell only forwards { body, url } today — header data is not available in `input` unless worker.js's buildRelayShell() is extended.");
+    }
+
+    out = out.replace(/\$response\.body/g, "input.body");
+    out = out.replace(/\$request\.url/g, "input.url");
+
+    // Terminal $done({ body: EXPR }); -> return EXPR;
+    out = out.replace(/\$done\s*\(\s*\{\s*body\s*:\s*([\s\S]*?)\s*\}\s*\)\s*;?/g, "return $1;");
+
+    // Any remaining bare $done({}); (early-exit branches) -> return "";
+    out = out.replace(/\$done\s*\(\s*\{\s*\}\s*\)\s*;?/g, 'return "";');
+
+    return { code: out.trim(), warnings };
+}
+
+function openLegacyConvertModal(){
+    openModal(`
+<h2>Convert Legacy Script</h2>
+<p class="field-hint">Paste the old Shadowrocket-style script (using $response / $request / $done). This gives a best-effort converted version — always review before uploading.</p>
+<div class="form">
+<div class="form-group form-full">
+<label>Legacy Script Code</label>
+<textarea id="legacyScriptInput" rows="10" style="width:100%;font-family:monospace;font-size:12px;"></textarea>
+</div>
+</div>
+<div class="actions">
+<button class="btn btn-gold" onclick="runLegacyConvert()">Convert</button>
+</div>
+<div id="legacyConvertResult"></div>
+`);
+}
+
+function runLegacyConvert(){
+    const raw = document.getElementById("legacyScriptInput").value;
+    if(!raw.trim()){
+        showToast("Paste some code first");
+        return;
+    }
+    const { code, warnings } = convertLegacyScript(raw);
+    const warnHtml = warnings.length
+        ? `<div class="form-group form-full" style="margin-top:12px;">
+<label style="color:#FF3B5C;">Review Needed</label>
+<ul style="font-size:12px;color:#FFB800;padding-left:18px;">
+${warnings.map(w => `<li>${escapeHtml(w)}</li>`).join("")}
+</ul>
+</div>`
+        : `<div class="form-group form-full" style="margin-top:12px;"><small class="field-hint">No red flags detected — still worth a quick read before upload.</small></div>`;
+
+    document.getElementById("legacyConvertResult").innerHTML = `
+${warnHtml}
+<div class="form-group form-full" style="margin-top:12px;">
+<label>Converted Output (editable)</label>
+<textarea id="convertedScriptOutput" rows="10" style="width:100%;font-family:monospace;font-size:12px;">${escapeHtml(code)}</textarea>
+</div>
+<div class="form-group form-full">
+<label>Upload As (filename)</label>
+<input id="convertedScriptName" type="text" placeholder="VMC.js">
+</div>
+<div class="actions">
+<button class="btn btn-green" onclick="uploadConvertedScript()">Upload Converted Script</button>
+</div>
+`;
+}
+
+function uploadConvertedScript(){
+    const name = document.getElementById("convertedScriptName").value.trim();
+    const code = document.getElementById("convertedScriptOutput").value;
+
+    if(!name){ showToast("Enter a filename"); return; }
+    if(!name.toLowerCase().endsWith(".js")){ showToast("Filename must end in .js"); return; }
+    if(!code.trim()){ showToast("Converted code is empty"); return; }
+
+    doScriptUploadText(name, code);
+}
+
+function doScriptUploadText(key, text){
+    fetch(
+        API +
+        "/script/upload?id=" +
+        encodeURIComponent(key) +
+        "&key=" +
+        encodeURIComponent(ADMIN_KEY),
+        {
+            method: "POST",
+            body: text
+        }
+    )
+    .then(r => r.json())
+    .then(data => {
+        showToast(data.message || "Script Uploaded");
+        closeModal();
+        loadScripts();
+    })
+    .catch(err => {
+        showToast(err.message);
+    });
+}
+
+function doScriptUpload(key, file){
+    const reader = new FileReader();
+    reader.onload = function(){
+        fetch(
+            API +
+            "/script/upload?id=" +
+            encodeURIComponent(key) +
+            "&key=" +
+            encodeURIComponent(ADMIN_KEY),
+            {
+                method: "POST",
+                body: reader.result
+            }
+        )
+        .then(r => r.json())
+        .then(data => {
+            showToast(data.message || "Script Uploaded");
+            loadScripts();
+        })
+        .catch(err => {
+            showToast(err.message);
+        });
+    };
+    reader.readAsText(file);
+}
+
+async function deleteScript(id){
+    if(!confirmAction("Delete this script?")) return;
+    try{
+        const result = await api(
+            "/script/delete?id=" +
+            encodeURIComponent(id),
+            {
+                method: "POST"
+            }
+        );
+        showToast(result.message);
+        loadScripts();
+    }catch(err){
+        showToast(err.message);
+    }
+}
+let accessModalUsers = [];
+
+function accessCountLabel(scriptKey){
+    const total = accessModalUsers.length;
+    const allowed = accessModalUsers.filter(
+        user => getEffectiveScripts(user).includes(scriptKey)
+    ).length;
+    return allowed + " / " + total;
+}
+
+function updateAccessCount(scriptKey){
+    const el = document.getElementById("accessCountLive");
+    if(!el) return;
+    const boxes = document.querySelectorAll(
+        "#accessUserList input[type=checkbox]"
+    );
+    const checked = Array.from(boxes).filter(b => b.checked).length;
+    el.textContent = checked + " / " + boxes.length;
+}
+
+function selectAllAccessUsers(scriptKey){
+    document
+    .querySelectorAll("#accessUserList .script-check")
+    .forEach(row => {
+        if(row.style.display === "none") return;
+        const box = row.querySelector("input[type=checkbox]");
+        if(box) box.checked = true;
+    });
+    updateAccessCount(scriptKey);
+}
+
+function accessUserRow(user, scriptKey){
+    const checked = getEffectiveScripts(user).includes(scriptKey) ? "checked" : "";
+    return `
+<label class="script-check" data-username="${user.username.toLowerCase()}">
+<input type="checkbox" data-token="${user.key}" ${checked}>
+<span>${user.username}</span>
+</label>
+`;
+}
+
+async function openAccessModal(scriptKey){
+    try{
+        const res = await api("/users");
+        accessModalUsers = res.users || [];
+    }catch(err){
+        showToast(err.message);
+        return;
+    }
+    openModal(`
+<h2>Allowed Users</h2>
+<p class="field-hint">
+${scriptKey} — <span id="accessCountLive">${accessCountLabel(scriptKey)}</span> Users
+</p>
+<div class="form-group form-full">
+<input
+id="accessUserSearch"
+class="search-box"
+placeholder="Search user...">
+</div>
+<div class="form-group form-full">
+<div id="accessUserList" class="script-checklist">
+${accessModalUsers.map(user => accessUserRow(user, scriptKey)).join("")}
+</div>
+</div>
+<br>
+<div class="actions">
+<button
+class="btn btn-gray"
+onclick="selectAllAccessUsers('${scriptKey}')">
+Select All
+</button>
+<button
+class="btn btn-gold"
+onclick="saveScriptAccess('${scriptKey}')">
+Save
+</button>
+</div>
+`);
+document
+.getElementById("accessUserList")
+.addEventListener("change", () => updateAccessCount(scriptKey));
+document
+.getElementById("accessUserSearch")
+.oninput = function(){
+    const keyword = this.value.toLowerCase().trim();
+    document
+    .querySelectorAll("#accessUserList .script-check")
+    .forEach(row => {
+        row.style.display =
+            row.dataset.username.includes(keyword) ? "" : "none";
+    });
+};
+}
+
+async function saveScriptAccess(scriptKey){
+    const boxes = document.querySelectorAll(
+        "#accessUserList input[type=checkbox]"
+    );
+    const updates = [];
+    boxes.forEach(box => {
+        const user = accessModalUsers.find(u => u.key === box.dataset.token);
+        if(!user) return;
+        const effective = getEffectiveScripts(user);
+        const wasChecked = effective.includes(scriptKey);
+        if(box.checked === wasChecked) return;
+        const updated = box.checked
+            ? (effective.includes(scriptKey) ? effective : [...effective, scriptKey])
+            : effective.filter(s => s !== scriptKey);
+        updates.push(
+            api("/edituser", {
+                method: "POST",
+                body: JSON.stringify({
+                    token: user.key,
+                    scripts: updated
+                })
+            })
+        );
+    });
+    if(!updates.length){
+        showToast("No changes to save");
+        closeModal();
+        return;
+    }
+    try{
+        await Promise.all(updates);
+        showToast(updates.length + " user(s) updated");
+        closeModal();
+    }catch(err){
+        showToast(err.message);
+    }
+}
