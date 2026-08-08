@@ -1,281 +1,280 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="si">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BiguuDev - NextGen Admin System</title>
-  <meta name="description" content="BiguuDev Admin Panel v4 - Advanced SaaS Security & Direct Script Execution System" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BiguuDev Admin — Control Console</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23060a10%22/><path d=%22M50 18 L78 32 V58 C78 76 64 86 50 92 C36 86 22 76 22 58 V32 Z%22 fill=%22none%22 stroke=%22%2300e5ff%22 stroke-width=%224%22/><circle cx=%2250%22 cy=%2252%22 r=%228%22 fill=%22%23d4af37%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Background Grids & Ambient Glows -->
-  <div class="bg-grid"></div>
-  <div class="ambient-glow ambient-glow-1"></div>
-  <div class="ambient-glow ambient-glow-2"></div>
-  <div class="ambient-glow ambient-glow-3"></div>
-
-  <!-- Mobile Overlay -->
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
-
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <div class="sidebar-logo-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      </div>
-      <div class="sidebar-logo-text">
-        <span class="sidebar-logo-name">BiguuDev</span>
-        <span class="sidebar-logo-badge">V4 Direct Core</span>
-      </div>
+<!-- ================= SIDEBAR ================= -->
+<aside id="sidebar" class="sidebar">
+  <div class="brand">
+    <div class="brand-mark">
+      <svg viewBox="0 0 100 100"><path d="M50 18 L78 32 V58 C78 76 64 86 50 92 C36 86 22 76 22 58 V32 Z" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="50" cy="52" r="9" class="brand-dot"/></svg>
     </div>
-
-    <!-- Navigation Menu -->
-    <nav class="menu">
-      <button class="nav-link active" onclick="showPage('dashboard')">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-        <span>Dashboard</span>
-      </button>
-      <button class="nav-link" onclick="showPage('users')">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span>Users List</span>
-      </button>
-      <button class="nav-link" onclick="showPage('scripts')">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <span>Script Vault</span>
-      </button>
-      <button class="nav-link" onclick="toggleSettings()">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        <span>Settings</span>
-      </button>
-    </nav>
-
-    <div class="sidebar-footer">
-      <div class="sidebar-status">
-        <span class="status-dot"></span>
-        <span class="status-text">System Active</span>
-      </div>
-      <div class="sidebar-version">V4.0 Direct Core</div>
-    </div>
-  </aside>
-
-  <!-- Main Container -->
-  <div class="main">
-
-    <!-- Topbar Header -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <button class="mobile-menu-btn" onclick="toggleMobileSidebar()" aria-label="Toggle menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
-        </button>
-        <div class="topbar-title-wrap">
-          <div class="topbar-dot"></div>
-          <h1 class="page-title" id="pageTitle">Overview Dashboard</h1>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <div class="admin-key-box" id="adminKeyBox" style="display:none;">
-          <input type="password" id="adminKeyInput" placeholder="Admin Key" />
-          <button class="btn btn-blue" onclick="saveAdminKey()">Save</button>
-        </div>
-        <button class="btn btn-red" onclick="logout()" style="padding: 6px 12px; font-size:11px;">Logout</button>
-      </div>
-    </header>
-
-    <!-- Content Sections Pages -->
-    <main class="content">
-
-      <!-- PAGE 1: DASHBOARD -->
-      <section id="dashboard" class="page active">
-        <div class="cards">
-          <div class="card">
-            <div class="card-title">Total Users</div>
-            <div class="card-value" id="stat-total">0</div>
-          </div>
-          <div class="card">
-            <div class="card-title">Active License</div>
-            <div class="card-value" style="color: #00FF88;" id="stat-active">0</div>
-          </div>
-          <div class="card">
-            <div class="card-title">At Risk / Suspicious</div>
-            <div class="card-value" style="color: #FF3B5C;" id="stat-risk">0</div>
-          </div>
-          <div class="card">
-            <div class="card-title">KV Scripts Uploaded</div>
-            <div class="card-value" style="color: #00C2FF;" id="stat-scripts">0</div>
-          </div>
-        </div>
-
-        <div class="form-card" style="max-width:100%;">
-          <h2>Activity Log Overview</h2>
-          <div id="activity-feed" class="activity-feed">
-            <p class="text-muted">Loading live activity system logs...</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- PAGE 2: USERS LIST & ADD USER -->
-      <section id="users" class="page">
-        <div class="toolbar">
-          <input type="text" id="userSearch" class="search-box" placeholder="Search users by name, key or IP..." onkeyup="filterUsers()" />
-          <button class="btn btn-gold" onclick="openAddUserModal()">+ Add New User</button>
-        </div>
-
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Access Key</th>
-                <th>IP / ASN</th>
-                <th>Status</th>
-                <th>Risk Count</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="usersList">
-              <!-- Rendered Dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- PAGE 3: DEDICATED INDIVIDUAL USER CONTROL PAGE -->
-      <section id="user-detail" class="page">
-        <div class="detail-header">
-          <button class="btn btn-gray" onclick="showPage('users')">← Back to Users List</button>
-          <h2 id="detail-username" class="user-detail-title">User Control Panel</h2>
-        </div>
-
-        <div class="user-detail-grid">
-          <!-- Profile Card -->
-          <div class="card detail-card">
-            <div class="card-title">User Info Profile</div>
-            <div class="info-row"><span>Username:</span> <strong id="detail-profile-username">—</strong></div>
-            <div class="info-row"><span>Access Key:</span> <code id="detail-profile-key" class="mono">—</code></div>
-            <div class="info-row"><span>Account Status:</span> <span id="detail-profile-status" class="badge active">—</span></div>
-            <div class="info-row"><span>Expire Date:</span> <span id="detail-profile-expire">—</span></div>
-            <div class="info-row"><span>Created:</span> <span id="detail-profile-created">—</span></div>
-            <div class="info-row"><span>Last Seen:</span> <span id="detail-profile-lastseen">—</span></div>
-          </div>
-
-          <!-- Security & Device Binding Card -->
-          <div class="card detail-card">
-            <div class="card-title">Security & Network Bindings</div>
-            <div class="info-row"><span>Primary IP (ip1):</span> <span id="detail-sec-ip1">—</span></div>
-            <div class="info-row"><span>ASN Network:</span> <span id="detail-sec-ip1asn">—</span></div>
-            <div class="info-row"><span>Country:</span> <span id="detail-sec-ip1country">—</span></div>
-            <div class="info-row"><span>Secondary IP (ip2):</span> <span id="detail-sec-ip2">—</span></div>
-            <div class="info-row"><span>Device User-Agent:</span> <span id="detail-sec-device" class="mono text-muted">—</span></div>
-            <div class="info-row"><span>Hard Locked:</span> <span id="detail-lock-badge" class="badge">—</span></div>
-            <div class="info-row"><span>Risk Flag:</span> <span id="detail-risk-badge" class="badge">—</span></div>
-          </div>
-        </div>
-
-        <!-- SCRIPT ACCESS CONTROL SECTION (DYNAMIC CHECKBOX SELECTOR) -->
-        <div class="form-card" style="max-width:100%; margin-top:20px;">
-          <h2>Script Access Permissions (Worker Integration)</h2>
-          <p class="text-muted" style="margin-bottom:15px; font-size:12px;">
-            Tick the scripts this user is allowed to run. Un-ticked scripts will be blocked automatically by Cloudflare Worker with a "Script Not Allowed" response.
-          </p>
-          
-          <div id="scriptAccessCheckboxGrid" class="script-checkbox-grid">
-            <!-- Dynamic checkboxes generated by app.js -->
-          </div>
-
-          <div style="margin-top:18px;">
-            <button class="btn btn-gold" onclick="saveUserScriptAccess()">Save Allowed Scripts</button>
-          </div>
-        </div>
-
-        <!-- CONTROL ACTIONS GRID -->
-        <div class="form-card" style="max-width:100%; margin-top:20px;">
-          <h2>User Management Controls</h2>
-          <div class="user-action-buttons">
-            <button class="btn btn-blue" onclick="detailToggleStatus()">Toggle Active / Disable</button>
-            <button class="btn btn-blue" onclick="detailChangeKey()">Change Key</button>
-            <button class="btn btn-green" onclick="detailResetSecurity()">Reset Security & Devices</button>
-            <button class="btn btn-red" onclick="detailLockUser()">Hard Lock User Access</button>
-            <button class="btn btn-green" onclick="detailUnlockUser()">Unlock User</button>
-            <button class="btn btn-red" style="background:#ff3b5c; color:#fff;" onclick="detailDelete()">Delete Account Permanently</button>
-          </div>
-        </div>
-
-        <!-- RISK LOGS HISTORY -->
-        <div class="form-card" style="max-width:100%; margin-top:20px;">
-          <h2>Risk Event Records</h2>
-          <div id="detail-risk-events" class="risk-events-container">
-            <p class="text-muted">No security risk events logged for this user.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- PAGE 4: SCRIPT VAULT -->
-      <section id="scripts" class="page">
-        <div class="toolbar">
-          <h2>KV Storage Scripts</h2>
-          <button class="btn btn-gold" onclick="openScriptUpload()">+ Upload Script (.js)</button>
-        </div>
-
-        <div id="scriptsList" class="scripts-grid">
-          <!-- Rendered scripts -->
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- MODAL: ADD USER -->
-  <div class="modal" id="addUserModal">
-    <div class="modal-box">
-      <h2>Create New User</h2>
-      <div class="form">
-        <div class="form-group form-full">
-          <label>Username</label>
-          <input type="text" id="addUsername" placeholder="e.g. JohnDoe" />
-        </div>
-        <div class="form-group form-full">
-          <label>Access Key (Leave empty to auto-generate)</label>
-          <input type="text" id="addCustomKey" placeholder="e.g. BIGUU-98321" />
-        </div>
-        <div class="form-group form-full">
-          <label>Expire Days</label>
-          <input type="number" id="addExpireDays" value="30" />
-        </div>
-      </div>
-      <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
-        <button class="btn btn-gray" onclick="closeAddUserModal()">Cancel</button>
-        <button class="btn btn-gold" onclick="submitCreateUser()">Create User</button>
-      </div>
+    <div class="brand-text">
+      <span class="brand-name">BiguuDev</span>
+      <span class="brand-sub">Control Console</span>
     </div>
   </div>
 
-  <!-- MODAL: UPLOAD SCRIPT -->
-  <div class="modal" id="uploadModal">
-    <div class="modal-box" style="max-width: 680px;">
-      <h2>Upload JS Script to Worker KV</h2>
-      <div class="form">
-        <div class="form-group form-full">
-          <label>Script File Name (Must end with .js)</label>
-          <input type="text" id="scriptName" placeholder="e.g. vip_bypass.js" />
-        </div>
-        <div class="form-group form-full">
-          <label>JS Source Code</label>
-          <textarea id="scriptContent" rows="12" style="font-family:monospace; font-size:12px;" placeholder="// Paste JS code here..."></textarea>
-        </div>
+  <nav class="nav">
+    <a href="#" class="nav-link active" onclick="showPage('dashboard')">
+      <span class="nav-ico">◆</span> Overview
+    </a>
+    <a href="#" class="nav-link" onclick="showPage('users')">
+      <span class="nav-ico">◈</span> Users
+    </a>
+    <a href="#" class="nav-link" onclick="showPage('scripts')">
+      <span class="nav-ico">◇</span> Script Vault
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="btn btn-ghost" onclick="toggleSettings()">Admin Key</button>
+    <button class="btn btn-ghost btn-danger-ghost" onclick="logout()">Log Out</button>
+  </div>
+</aside>
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+<!-- ================= TOPBAR ================= -->
+<header class="topbar">
+  <button class="icon-btn" onclick="toggleMobileSidebar()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <h1 id="pageTitle">Overview Dashboard</h1>
+  <button class="icon-btn" onclick="toggleSettings()" aria-label="Settings">⚙</button>
+</header>
+
+<!-- Admin key box -->
+<div id="adminKeyBox" class="admin-key-box" style="display:none;">
+  <input id="adminKeyInput" type="password" placeholder="Enter Admin Key" autocomplete="off">
+  <button class="btn btn-gold" onclick="saveAdminKey()">Save</button>
+</div>
+
+<!-- ================= MAIN ================= -->
+<main class="content">
+
+  <!-- ---------- DASHBOARD ---------- -->
+  <section id="dashboard" class="page active">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-label">Total Users</span>
+        <span id="stat-total" class="stat-value">0</span>
       </div>
-      <div style="margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
-        <button class="btn btn-gray" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-gold" onclick="uploadScript()">Upload Script</button>
+      <div class="stat-card accent-cyan">
+        <span class="stat-label">Active</span>
+        <span id="stat-active" class="stat-value">0</span>
+      </div>
+      <div class="stat-card accent-danger">
+        <span class="stat-label">Risk Flags</span>
+        <span id="stat-risk" class="stat-value">0</span>
+      </div>
+      <div class="stat-card accent-gold">
+        <span class="stat-label">Scripts</span>
+        <span id="stat-scripts" class="stat-value">0</span>
       </div>
     </div>
-  </div>
 
-  <script src="app.js"></script>
+    <div class="card">
+      <div class="card-title">Live Activity</div>
+      <div id="activity-feed"></div>
+    </div>
+  </section>
+
+  <!-- ---------- USERS ---------- -->
+  <section id="users" class="page">
+    <div class="toolbar">
+      <input id="userSearch" class="search-input" type="text" placeholder="Search username or key…" oninput="filterUsers()">
+      <button class="btn btn-gold" onclick="openAddUserModal()">+ New User</button>
+    </div>
+
+    <div class="table-wrap card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Key</th>
+            <th>IP</th>
+            <th>Status</th>
+            <th>Risk</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="usersList">
+          <tr><td colspan="6" style="text-align:center;">Loading users…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ---------- USER DETAIL ---------- -->
+  <section id="user-detail" class="page">
+    <button class="btn btn-ghost back-btn" onclick="showPage('users')">← Back to Users</button>
+    <h2 id="detail-username" class="detail-heading">Control Panel</h2>
+
+    <div class="card">
+      <div class="card-title">Profile</div>
+      <div class="info-row"><span>Username</span><strong id="detail-profile-username">—</strong></div>
+      <div class="info-row"><span>Key</span><strong id="detail-profile-key" class="mono">—</strong></div>
+      <div class="info-row"><span>Status</span><strong id="detail-profile-status">—</strong></div>
+      <div class="info-row"><span>Expires</span><strong id="detail-profile-expire">—</strong></div>
+      <div class="info-row"><span>Created</span><strong id="detail-profile-created">—</strong></div>
+      <div class="info-row"><span>Last Seen</span><strong id="detail-profile-lastseen">—</strong></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        Device &amp; Network Binding
+        <span class="badge-pair">
+          <span id="detail-lock-badge" class="badge">—</span>
+          <span id="detail-risk-badge" class="badge">—</span>
+        </span>
+      </div>
+      <div class="info-row"><span>IP Address</span><strong id="detail-sec-ip1" class="mono">—</strong></div>
+      <div class="info-row"><span>Carrier / ISP</span><strong id="detail-sec-ip1asn">—</strong></div>
+      <div class="info-row"><span>Country</span><strong id="detail-sec-ip1country">—</strong></div>
+      <div class="info-row"><span>Secondary IP</span><strong id="detail-sec-ip2" class="mono">—</strong></div>
+      <div class="info-row"><span>Device Model</span><strong id="detail-sec-device">—</strong></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Script Access</div>
+      <div id="scriptAccessCheckboxGrid" class="script-checkbox-grid"></div>
+      <button class="btn btn-gold" style="margin-top:12px;width:100%;" onclick="saveUserScriptAccess()">Save Script Access</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Risk Log</div>
+      <div id="detail-risk-events"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Actions</div>
+      <div class="action-grid">
+        <button class="btn btn-blue" onclick="detailToggleStatus()">Toggle Status</button>
+        <button class="btn btn-blue" onclick="detailChangeKey()">Change Key</button>
+        <button class="btn btn-blue" onclick="detailResetSecurity()">Reset Binding</button>
+        <button class="btn btn-gold" onclick="detailUnlockUser()">Unlock User</button>
+        <button class="btn btn-red" onclick="detailLockUser()">Lock User</button>
+        <button class="btn btn-red" onclick="detailDelete()">Delete User</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- SCRIPTS ---------- -->
+  <section id="scripts" class="page">
+    <div class="toolbar">
+      <span class="text-muted">KV Script Storage</span>
+      <button class="btn btn-gold" onclick="openScriptUpload()">+ Upload Script</button>
+    </div>
+    <div id="scriptsList" class="scripts-grid"></div>
+  </section>
+
+</main>
+
+<!-- ================= MODALS ================= -->
+<div id="uploadModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">Upload Script</div>
+    <label class="field-label">Script Name (e.g. VMC.js)</label>
+    <input id="scriptName" type="text" placeholder="VMC.js">
+    <label class="field-label">Script Content</label>
+    <textarea id="scriptContent" rows="8" placeholder="// paste script logic here"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="uploadScript()">Upload</button>
+    </div>
+  </div>
+</div>
+
+<div id="addUserModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">New User</div>
+    <label class="field-label">Username</label>
+    <input id="addUsername" type="text" placeholder="e.g. kasun_99">
+    <label class="field-label">Custom Key (optional)</label>
+    <input id="addCustomKey" type="text" placeholder="Leave blank to auto-generate">
+    <label class="field-label">Expire (days)</label>
+    <input id="addExpireDays" type="number" value="30" min="1">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeAddUserModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="submitCreateUser()">Create</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+
+<!-- ================================================================
+     Display-only enhancement layer.
+     Does not touch app.js — just formats what it renders:
+     ASN → carrier name, iPhone identifier → marketing name.
+     Extend ASN_CARRIERS / DEVICE_MODELS below as needed.
+==================================================================== -->
+<script>
+(function () {
+  // Sri Lankan carrier ASNs (verified against public BGP/whois records)
+  const ASN_CARRIERS = {
+    18001: "Dialog",
+    132045: "Dialog (Airtel)",
+    9329: "SLT / Mobitel",
+    45489: "SLT / Mobitel",
+    17470: "Hutch",
+    132447: "Hutch"
+  };
+
+  function carrierFromASN(asn) {
+    if (!asn) return "—";
+    if (ASN_CARRIERS[asn]) return ASN_CARRIERS[asn];
+    return "AS" + asn;
+  }
+
+  // Apple hardware identifier → marketing name.
+  // Covers iPhone 6s through 16-series. Add new entries as Apple
+  // releases new identifiers (e.g. next year's iPhone 17 series).
+  const DEVICE_MODELS = {
+    "iPhone8,1": "iPhone 6s", "iPhone8,2": "iPhone 6s Plus", "iPhone8,4": "iPhone SE (1st gen)",
+    "iPhone9,1": "iPhone 7", "iPhone9,3": "iPhone 7", "iPhone9,2": "iPhone 7 Plus", "iPhone9,4": "iPhone 7 Plus",
+    "iPhone10,1": "iPhone 8", "iPhone10,4": "iPhone 8", "iPhone10,2": "iPhone 8 Plus", "iPhone10,5": "iPhone 8 Plus",
+    "iPhone10,3": "iPhone X", "iPhone10,6": "iPhone X",
+    "iPhone11,2": "iPhone XS", "iPhone11,4": "iPhone XS Max", "iPhone11,6": "iPhone XS Max", "iPhone11,8": "iPhone XR",
+    "iPhone12,1": "iPhone 11", "iPhone12,3": "iPhone 11 Pro", "iPhone12,5": "iPhone 11 Pro Max", "iPhone12,8": "iPhone SE (2nd gen)",
+    "iPhone13,1": "iPhone 12 mini", "iPhone13,2": "iPhone 12", "iPhone13,3": "iPhone 12 Pro", "iPhone13,4": "iPhone 12 Pro Max",
+    "iPhone14,4": "iPhone 13 mini", "iPhone14,5": "iPhone 13", "iPhone14,2": "iPhone 13 Pro", "iPhone14,3": "iPhone 13 Pro Max", "iPhone14,6": "iPhone SE (3rd gen)",
+    "iPhone14,7": "iPhone 14", "iPhone14,8": "iPhone 14 Plus", "iPhone15,2": "iPhone 14 Pro", "iPhone15,3": "iPhone 14 Pro Max",
+    "iPhone15,4": "iPhone 15", "iPhone15,5": "iPhone 15 Plus", "iPhone16,1": "iPhone 15 Pro", "iPhone16,2": "iPhone 15 Pro Max",
+    "iPhone17,3": "iPhone 16", "iPhone17,4": "iPhone 16 Plus", "iPhone17,1": "iPhone 16 Pro", "iPhone17,2": "iPhone 16 Pro Max", "iPhone17,5": "iPhone 16e"
+  };
+
+  function deviceModelName(raw) {
+    if (!raw) return "—";
+    if (DEVICE_MODELS[raw]) return DEVICE_MODELS[raw];
+    if (/^iPad/.test(raw)) return raw + " (iPad)";
+    if (/^iPod/.test(raw)) return raw + " (iPod touch)";
+    return raw; // unknown identifier — show raw so nothing is hidden
+  }
+
+  // Wrap viewUserDetail (already defined by app.js) so the two fields
+  // it fills get reformatted right after app.js populates them.
+  if (typeof viewUserDetail === "function") {
+    const _origViewUserDetail = viewUserDetail;
+    viewUserDetail = async function (key) {
+      await _origViewUserDetail(key);
+      if (currentUser && currentUser.security) {
+        const asnEl = document.getElementById("detail-sec-ip1asn");
+        if (asnEl) asnEl.textContent = carrierFromASN(currentUser.security.ip1Asn);
+        const devEl = document.getElementById("detail-sec-device");
+        if (devEl) devEl.textContent = deviceModelName(currentUser.security.uaDevice);
+      }
+    };
+  }
+})();
+</script>
 </body>
 </html>
