@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Admin Dashboard Studio</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="admin-nav">
+    <div class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </div>
+      <div class="nav-logo-text">
+        ADMIN<span>STUDIO</span>
+      </div>
+    </div>
+    
+    <div class="nav-actions">
+      <span class="access-badge badge-admin">SYSTEM ONLINE</span>
+      <button class="btn-ghost">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Admin Main Container -->
+  <main class="admin-container">
+    
+    <!-- Hero / Header Section -->
+    <header class="admin-header">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-dot"></span>
+        MANAGEMENT ENGINE
+      </div>
+      <h1 class="admin-title">
+        Control & Overview <br>
+        <span class="title-accent">Dashboard</span>
+      </h1>
+      <p class="admin-sub">Manage system workflow, user access levels, and monitor system tasks in real-time.</p>
+    </header>
+
+    <!-- Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">1,240</div>
+        <div class="stat-label">Total Active Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">99.9%</div>
+        <div class="stat-label">System Uptime</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">342</div>
+        <div class="stat-label">Pending Approvals</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">4.9/5</div>
+        <div class="stat-label">Admin Rating</div>
+      </div>
+    </section>
+
+    <!-- Admin Panel Content Layout -->
+    <section class="admin-layout">
+      
+      <!-- Main Workflow Column -->
+      <div class="admin-main">
+        
+        <!-- Workflow Step 01 -->
+        <div class="wf-step">
+          <div class="wf-step-hd">
+            <span class="wf-num">01</span>
+            <span class="wf-dot">·</span>
+            <span class="wf-lbl">FILE MANAGEMENT</span>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Upload System Files</span>
+            </div>
+            <div class="card-body">
+              <div class="upload-zone">
+                <div class="upload-icon">
+                  <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                </div>
+                <div class="upload-title">Drop Administrative Data Here</div>
+                <div class="upload-sub">Drag & drop JSON, CSV or System logs</div>
+                <span class="btn-browse">Browse Data</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Workflow Step 02 -->
+        <div class="wf-step">
+          <div class="wf-step-hd">
+            <span class="wf-num">02</span>
+            <span class="wf-dot">·</span>
+            <span class="wf-lbl">ACTIONS & ENGINES</span>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Select Administrative Action</span>
+            </div>
+            <div class="card-body">
+              <div class="engine-grid">
+                
+                <!-- Action 1 -->
+                <div class="engine-card active">
+                  <div class="ec-header">
+                    <div class="ec-icon">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    </div>
+                    <span class="ec-tier ec-free">DEFAULT</span>
+                  </div>
+                  <div class="ec-info">
+                    <div class="ec-name">Quick System Sync</div>
+                    <div class="ec-sub">FAST PROCESS</div>
+                  </div>
+                  <div class="ec-desc">Sync all user sessions and refresh database cache</div>
+                </div>
+
+                <!-- Action 2 -->
+                <div class="engine-card">
+                  <div class="ec-header">
+                    <div class="ec-icon ec-icon-gold">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <span class="ec-tier ec-pro">PRO</span>
+                  </div>
+                  <div class="ec-info">
+                    <div class="ec-name">Database Backup</div>
+                    <div class="ec-sub">DEEP ENGINE V2</div>
+                  </div>
+                  <div class="ec-desc">Full encrypted cloud server backup without downtime</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Workflow Step 03 -->
+        <div class="wf-step">
+          <div class="wf-step-hd">
+            <span class="wf-num">03</span>
+            <span class="wf-dot">·</span>
+            <span class="wf-lbl">EXECUTE</span>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <button class="btn-primary-action">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+                Execute Admin Command
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Column -->
+      <aside class="admin-sidebar">
+        <div class="pro-card">
+          <div class="pro-badge">ADMIN CONTROL</div>
+          <div class="pro-title">System Status</div>
+          <ul class="pro-features">
+            <li>Database Connected</li>
+            <li>Cache Active</li>
+            <li>Auto-Backup ON</li>
+            <li>High Priority Mode</li>
+          </ul>
+          <button class="btn-gold" style="width: 100%;">System Settings →</button>
+        </div>
+      </aside>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="admin-footer">
+    <p>Admin Dashboard Engine • Built for Performance</p>
+  </footer>
+
+</body>
+</html>
