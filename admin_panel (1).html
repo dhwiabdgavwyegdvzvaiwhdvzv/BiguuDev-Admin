@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="red">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>BiguuDev Admin</title>
+
+<!-- iOS "Add to Home Screen" support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Biguu Admin">
+<link rel="apple-touch-icon" href="logo.png">
+
+<!-- Browser tab favicon + theme color -->
+<link rel="icon" type="image/png" href="logo.png">
+<meta name="theme-color" content="#050505">
+<style>
+:root {
+  --gold: #ef233c; --gold-2: #c81e33;
+  --bg-dark: #050505; --bg-card: #141414; --bg-card-2: #191919; --bg-card-3: #1e1e1e;
+  --border: rgba(239,35,60,0.12); --border-hover: rgba(239,35,60,0.35);
+  --text-primary: #f6f3ec; --text-secondary: #a8a29a; --text-muted: rgba(168,162,154,0.5);
+  --green: #00E676; --purple: #7B61FF; --red: #ff5470;
+  --radius: 12px; --radius-sm: 8px;
+  --glass: rgba(255,255,255,0.03); --glass-border: rgba(255,255,255,0.08);
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.4), 0 10px 30px -12px rgba(0,0,0,0.6);
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { width: 100%; background: var(--bg-dark); }
+body {
+  margin: 0; font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg-dark);
+  background-image: radial-gradient(ellipse 1200px 600px at 50% -10%, rgba(239,35,60,0.06), transparent 60%);
+  color: var(--text-primary);
+  min-height: 100vh; min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; }
+input { font-family: inherit; }
+a { color: inherit; }
+
+/* ---------- Top bar (sticky, not fixed — avoids scroll-jank) ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
+  background: rgba(5,5,5,0.85);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--glass-border);
+}
+.topbar-brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.topbar-logo { width: 30px; height: 30px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+.topbar-title { font-size: 13px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.icon-btn {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--glass); border: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-secondary); transition: background .2s var(--ease), color .2s var(--ease);
+}
+.icon-btn:active { background: var(--gold); color: #000; }
+
+/* ---------- Bottom nav (mobile-first primary navigation) ---------- */
+.bottom-nav {
+  position: sticky; bottom: 0; z-index: 40;
+  display: flex; justify-content: space-around;
+  padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+  background: rgba(5,5,5,0.92);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid var(--glass-border);
+}
+.bn-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 10px; border-radius: 10px; background: none; border: none;
+  color: var(--text-muted); font-size: 10px; font-weight: 700; letter-spacing: .3px;
+  transition: color .2s var(--ease);
+  flex: 1; max-width: 90px;
+}
+.bn-item svg { width: 20px; height: 20px; }
+.bn-item.active { color: var(--gold); }
+
+/* ---------- Layout / views ---------- */
+.view { display: none; padding: 16px 16px calc(90px + env(safe-area-inset-bottom)); max-width: 640px; margin: 0 auto; }
+.view.active { display: block; animation: fadeIn .25s var(--ease); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--glass-border);
+  border-radius: var(--radius); box-shadow: var(--shadow-soft);
+  padding: 16px; margin-bottom: 12px;
+}
+.section-title { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin: 20px 0 10px; }
+.section-title:first-child { margin-top: 0; }
+
+/* ---------- Login / PIN gate ---------- */
+#loginGate {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-dark); padding: 20px;
+}
+.login-card { width: 100%; max-width: 340px; text-align: center; }
+.login-logo { width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 16px; object-fit: cover; }
+.login-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+.login-sub { font-size: 12px; color: var(--text-secondary); margin-bottom: 22px; }
+.input-field {
+  width: 100%; padding: 13px 14px; border-radius: var(--radius-sm);
+  background: var(--glass); border: 1px solid var(--glass-border);
+  color: var(--text-primary); font-size: 15px; outline: none;
+  transition: border-color .2s var(--ease);
+}
+.input-field:focus { border-color: var(--border-hover); }
+.login-error { color: var(--red); font-size: 12px; margin-top: 8px; min-height: 16px; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 12px 18px; border-radius: var(--radius-sm); border: none;
+  font-size: 14px; font-weight: 700; width: 100%; margin-top: 12px;
+  transition: transform .12s var(--ease), opacity .2s var(--ease);
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--gold); color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--text-primary); }
+.btn-ghost { background: var(--glass); color: var(--text-secondary); font-size: 12px; padding: 9px 14px; width: auto; margin-top: 0; }
+.btn-danger { background: rgba(255,84,112,0.12); border: 1px solid rgba(255,84,112,0.3); color: var(--red); }
+.btn-success { background: rgba(0,230,118,0.12); border: 1px solid rgba(0,230,118,0.3); color: var(--green); }
+.btn-sm { padding: 8px 12px; font-size: 12px; margin-top: 0; width: auto; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-row .btn { flex: 1; min-width: 100px; }
+.btn:disabled { opacity: 0.5; pointer-events: none; }
+
+/* ---------- Stats grid ---------- */
+.stats-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+.stat-box { background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: var(--radius); padding: 14px; }
+.stat-num { font-size: 24px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; }
+.stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+.stat-box.risk .stat-num { color: var(--red); }
+.stat-box.active .stat-num { color: var(--green); }
+
+/* ---------- User list ---------- */
+.search-bar { display: flex; gap: 8px; margin-bottom: 14px; }
+.search-bar .input-field { flex: 1; }
+.user-row {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg-card); border: 1px solid var(--glass-border);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px;
+  transition: border-color .2s var(--ease);
+}
+.user-row:active { border-color: var(--border-hover); }
+.user-avatar {
+  width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(239,35,60,0.1); border: 1px solid rgba(239,35,60,0.22);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; color: var(--gold);
+}
+.user-row-body { flex: 1; min-width: 0; }
+.user-row-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-row-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.badge {
+  font-size: 9px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 50px; white-space: nowrap;
+}
+.badge.active { background: rgba(0,230,118,0.1); color: var(--green); border: 1px solid rgba(0,230,118,0.25); }
+.badge.disabled { background: rgba(168,162,154,0.1); color: var(--text-muted); border: 1px solid rgba(168,162,154,0.2); }
+.badge.risk { background: rgba(255,84,112,0.12); color: var(--red); border: 1px solid rgba(255,84,112,0.3); }
+.badge.locked { background: rgba(255,84,112,0.12); color: var(--red); border: 1px solid rgba(255,84,112,0.3); }
+.chevron { color: var(--text-muted); flex-shrink: 0; }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 13px; }
+
+/* ---------- User detail "page" ---------- */
+.detail-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.back-btn {
+  width: 34px; height: 34px; border-radius: 10px; background: var(--glass);
+  border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center;
+  color: var(--text-primary); flex-shrink: 0;
+}
+.detail-title { font-size: 16px; font-weight: 800; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kv-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.kv-table tr { border-bottom: 1px solid var(--glass-border); }
+.kv-table tr:last-child { border-bottom: none; }
+.kv-table td { padding: 9px 4px; vertical-align: top; }
+.kv-table td:first-child { color: var(--text-muted); width: 42%; font-size: 12px; }
+.kv-table td:last-child { text-align: right; font-weight: 600; word-break: break-all; }
+.risk-event { background: var(--glass); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 6px; font-size: 12px; }
+.risk-event-reason { font-weight: 700; color: var(--red); }
+.risk-event-meta { color: var(--text-muted); font-size: 11px; margin-top: 3px; }
+
+/* ---------- Modals ---------- */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,0.65);
+  display: none; align-items: flex-end; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.show { display: flex; }
+.modal-sheet {
+  width: 100%; max-width: 480px; max-height: 85dvh; overflow-y: auto;
+  background: var(--bg-card-2); border-radius: 20px 20px 0 0;
+  padding: 20px 18px calc(20px + env(safe-area-inset-bottom));
+  animation: sheetUp .25s var(--ease);
+}
+@keyframes sheetUp { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+.modal-title { font-size: 16px; font-weight: 800; margin-bottom: 14px; }
+.form-label { font-size: 11px; color: var(--text-muted); margin: 12px 0 6px; text-transform: uppercase; letter-spacing: .5px; }
+.form-label:first-child { margin-top: 0; }
+.textarea-field { min-height: 140px; resize: vertical; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.5; }
+
+/* ---------- Toast ---------- */
+#toast {
+  position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); left: 50%;
+  transform: translateX(-50%) translateY(10px); z-index: 200;
+  background: var(--bg-card-3); border: 1px solid var(--glass-border);
+  padding: 10px 18px; border-radius: 50px; font-size: 13px; font-weight: 600;
+  opacity: 0; pointer-events: none; transition: opacity .25s var(--ease), transform .25s var(--ease);
+  box-shadow: var(--shadow-soft); white-space: nowrap;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ---------- Script list ---------- */
+.script-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: var(--bg-card); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm); padding: 11px 14px; margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+}
+.spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.2); border-top-color: var(--gold);
+  animation: spin .7s linear infinite; display: inline-block;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-row { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 30px; color: var(--text-muted); font-size: 13px; }
+
+.warn-box { background: rgba(255,180,0,0.08); border: 1px solid rgba(255,180,0,0.25); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 11.5px; color: #ffcf5c; margin-top: 8px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- ==================== LOGIN GATE ==================== -->
+<div id="loginGate">
+  <div class="login-card">
+    <img class="login-logo" src="logo.png" alt="Logo" onerror="this.style.display='none'">
+    <div class="login-title">BiguuDev Admin</div>
+    <div class="login-sub" id="loginSub">Enter your PIN to continue</div>
+    <input type="password" inputmode="numeric" class="input-field" id="loginPassword" placeholder="PIN" autocomplete="off">
+    <button class="btn btn-primary" onclick="attemptLogin()">Unlock</button>
+    <div class="login-error" id="loginError"></div>
+    <div style="margin-top:14px;">
+      <button class="btn-ghost" style="background:none;border:none;" onclick="toggleForgotPassword()">Forgot PIN?</button>
+    </div>
+    <div id="loginResetSection" style="display:none; margin-top:10px;">
+      <div class="warn-box">This clears your local PIN only — it does not affect real access, which is controlled by the ?key= link you were given.</div>
+      <button class="btn btn-outline" onclick="attemptReset()">Reset PIN</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APP SHELL ==================== -->
+<div id="appShell" style="display:none;">
+  <div class="topbar">
+    <div class="topbar-brand">
+      <img class="topbar-logo" src="logo.png" alt="" onerror="this.style.display='none'">
+      <div class="topbar-title" id="topbarTitle">BiguuDev Admin</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="loadDashboard()" title="Refresh">⟳</button>
+    </div>
+  </div>
+
+  <!-- ---------- Dashboard view ---------- -->
+  <div class="view active" id="view-dashboard">
+    <div class="section-title">Overview</div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="loading-row" style="grid-column:1/-1;"><span class="spinner"></span> Loading…</div>
+    </div>
+
+    <div class="section-title">Recent Users</div>
+    <div class="btn-row" style="margin-bottom:10px;">
+      <button class="btn btn-outline btn-sm" style="flex:1;" onclick="resetAllUsers()">⟲ Reset All Security</button>
+      <button class="btn btn-danger btn-sm" style="flex:1;" onclick="disableAllUsers()">⛔ Disable All</button>
+    </div>
+    <div class="search-bar">
+      <input type="text" class="input-field" id="userSearch" placeholder="Search username or key…" oninput="renderUserList()">
+      <button class="btn btn-primary" style="width:auto;margin:0;padding:12px 16px;" onclick="openAddUserModal()">+ Add</button>
+    </div>
+    <div id="userListContainer"><div class="loading-row"><span class="spinner"></span> Loading users…</div></div>
+  </div>
+
+  <!-- ---------- User detail "page" ---------- -->
+  <div class="view" id="view-userDetail">
+    <div class="detail-header">
+      <button class="back-btn" onclick="goToView('dashboard')">←</button>
+      <div class="detail-title" id="detailTitle">User</div>
+    </div>
+    <div id="userDetailBody"><div class="loading-row"><span class="spinner"></span> Loading…</div></div>
+  </div>
+
+  <!-- ---------- Scripts view ---------- -->
+  <div class="view" id="view-scripts">
+    <div class="section-title">Scripts (SCRIPTS KV)</div>
+    <div class="btn-row" style="margin-bottom:14px;">
+      <button class="btn btn-primary" onclick="openUploadScriptModal()">Upload New</button>
+      <button class="btn btn-outline" onclick="openLegacyConvertModal()">Convert Legacy</button>
+    </div>
+    <div id="scriptListContainer"><div class="loading-row"><span class="spinner"></span> Loading…</div></div>
+  </div>
+
+  <!-- ---------- Settings view ---------- -->
+  <div class="view" id="view-settings">
+    <div class="section-title">Panel Settings</div>
+    <div class="card">
+      <div class="form-label">Panel Name</div>
+      <input type="text" class="input-field" id="settingsPanelName">
+      <div class="form-label">Default Expire (days)</div>
+      <input type="number" class="input-field" id="settingsDefaultExpire">
+      <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+    </div>
+    <div class="section-title">Danger Zone</div>
+    <div class="card">
+      <button class="btn btn-outline" onclick="downloadBackup()">Download Backup (JSON)</button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="bn-item active" data-view="dashboard" onclick="goToView('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+      Dashboard
+    </button>
+    <button class="bn-item" data-view="scripts" onclick="goToView('scripts')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+      Scripts
+    </button>
+    <button class="bn-item" data-view="settings" onclick="goToView('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9c.14.31.22.65.22 1 0 .35-.08.69-.22 1z"/></svg>
+      Settings
+    </button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ---------- Add / Edit User modal ---------- -->
+<div class="modal-overlay" id="userFormModal">
+  <div class="modal-sheet">
+    <div class="modal-title" id="userFormTitle">Add User</div>
+    <div class="form-label">Username</div>
+    <input type="text" class="input-field" id="formUsername">
+    <div class="form-label">X-Biguu-Key (token)</div>
+    <input type="text" class="input-field" id="formToken">
+    <div class="form-label">Expire (Unix timestamp)</div>
+    <input type="number" class="input-field" id="formExpire">
+    <div class="form-label">Allowed Scripts (comma-separated, blank = defaults)</div>
+    <input type="text" class="input-field" id="formScripts" placeholder="VMC.js, VMFTACK.js">
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-outline" onclick="closeModal('userFormModal')">Cancel</button>
+      <button class="btn btn-primary" id="userFormSubmitBtn" onclick="submitUserForm()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- Upload Script modal ---------- -->
+<div class="modal-overlay" id="uploadScriptModal">
+  <div class="modal-sheet">
+    <div class="modal-title">Upload Script</div>
+    <div class="form-label">Script ID (filename, e.g. VMC.js)</div>
+    <input type="text" class="input-field" id="uploadScriptId">
+    <div class="form-label">Content</div>
+    <textarea class="input-field textarea-field" id="uploadScriptContent" placeholder="Must use input.body / input.url / input.appUA and return the output — see Convert Legacy for old $response/$done style scripts."></textarea>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-outline" onclick="closeModal('uploadScriptModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="doScriptUpload()">Upload</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- Convert Legacy Script modal ---------- -->
+<div class="modal-overlay" id="legacyConvertModal">
+  <div class="modal-sheet">
+    <div class="modal-title">Convert Legacy Script</div>
+    <div class="form-label">Paste old-style script ($response / $request / $done)</div>
+    <textarea class="input-field textarea-field" id="legacyScriptInput"></textarea>
+    <button class="btn btn-outline" onclick="runLegacyConvert()">Convert →</button>
+    <div id="legacyWarnings"></div>
+    <div class="form-label" id="convertedLabel" style="display:none;">Converted (input/return style) — review before uploading</div>
+    <textarea class="input-field textarea-field" id="convertedScript" style="display:none;"></textarea>
+    <div class="form-label" id="convertedIdLabel" style="display:none;">Script ID to save as</div>
+    <input type="text" class="input-field" id="convertedScriptId" style="display:none;">
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-outline" onclick="closeModal('legacyConvertModal')">Close</button>
+      <button class="btn btn-primary" id="uploadConvertedBtn" style="display:none;" onclick="uploadConvertedScript()">Upload Converted Script</button>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- Script Access modal ---------- -->
+<div class="modal-overlay" id="scriptAccessModal">
+  <div class="modal-sheet">
+    <div class="modal-title">Access — <span id="scriptAccessName" style="font-family:monospace;"></span></div>
+    <div class="warn-box">Only users with an explicit script list can be toggled here. Users still on default scripts show "(default)" — edit them once first to set an explicit list.</div>
+    <div id="scriptAccessUserList" style="margin-top:10px;max-height:50vh;overflow-y:auto;"></div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-outline" onclick="closeModal('scriptAccessModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveScriptAccess()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIG
+   ===================================================================== */
+const ADMIN_KEY = new URLSearchParams(location.search).get("key");
+const API = "https://biguudev-admin-v2.biguudev.workers.dev"; // <-- set to your real admin_worker.js URL
+
+function apiUrl(path, extraParams) {
+  const p = new URLSearchParams(extraParams || {});
+  p.set("key", ADMIN_KEY || "");
+  return API + path + "?" + p.toString();
+}
+async function apiGet(path, extraParams) {
+  const res = await fetch(apiUrl(path, extraParams));
+  const data = await res.json();
+  if (!data.success) throw new Error(data.message || "Request failed");
+  return data;
+}
+async function apiPost(path, body, extraParams) {
+  const res = await fetch(apiUrl(path, extraParams), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: body !== undefined ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.message || "Request failed");
+  return data;
+}
+async function apiPostRaw(path, rawText, extraParams) {
+  const res = await fetch(apiUrl(path, extraParams), { method: "POST", body: rawText });
+  const data = await res.json();
+  if (!data.success) throw new Error(data.message || "Request failed");
+  return data;
+}
+
+/* =====================================================================
+   TOAST
+   ===================================================================== */
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+}
+
+/* =====================================================================
+   LOGIN (local screen-lock only — real auth is the ?key= URL param,
+   checked server-side on every admin_worker.js call)
+   ===================================================================== */
+const AUTH_STORAGE_KEY = "biguudev_admin_auth";
+const PIN_HASH_STORAGE_KEY = "biguudev_admin_pin_hash";
+
+async function sha256Hex(text) {
+  const data = new TextEncoder().encode(text);
+  const hashBuf = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function isAuthenticated() { return sessionStorage.getItem(AUTH_STORAGE_KEY) === "1"; }
+function hasPinSet() { return !!localStorage.getItem(PIN_HASH_STORAGE_KEY); }
+function showLoginError(msg) { document.getElementById("loginError").textContent = msg; }
+
+function toggleForgotPassword() {
+  const el = document.getElementById("loginResetSection");
+  el.style.display = el.style.display === "none" ? "block" : "none";
+}
+async function attemptLogin() {
+  const pin = document.getElementById("loginPassword").value;
+  if (!pin) { showLoginError("Enter your PIN"); return; }
+  if (!hasPinSet()) {
+    localStorage.setItem(PIN_HASH_STORAGE_KEY, await sha256Hex(pin));
+    grantAccess();
+    return;
+  }
+  const enteredHash = await sha256Hex(pin);
+  if (enteredHash === localStorage.getItem(PIN_HASH_STORAGE_KEY)) grantAccess();
+  else showLoginError("Incorrect PIN");
+}
+function attemptReset() {
+  localStorage.removeItem(PIN_HASH_STORAGE_KEY);
+  showToast("PIN cleared — set a new one now");
+  grantAccess();
+}
+function grantAccess() {
+  sessionStorage.setItem(AUTH_STORAGE_KEY, "1");
+  document.getElementById("loginGate").style.display = "none";
+  document.getElementById("appShell").style.display = "block";
+  if (!ADMIN_KEY) {
+    showToast("No ?key= in URL — API calls will fail");
+  }
+  loadDashboard();
+  loadScripts();
+}
+
+/* =====================================================================
+   VIEW ROUTING (hash-based — feels like separate pages)
+   ===================================================================== */
+let currentUsers = [];
+let currentUserDetailToken = null;
+
+function goToView(name, param) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.querySelectorAll(".bn-item").forEach(b => b.classList.remove("active"));
+  const view = document.getElementById("view-" + name);
+  if (view) view.classList.add("active");
+  const nav = document.querySelector('.bn-item[data-view="' + name + '"]');
+  if (nav) nav.classList.add("active");
+  window.scrollTo(0, 0);
+  if (name === "userDetail" && param) {
+    currentUserDetailToken = param;
+    location.hash = "user/" + encodeURIComponent(param);
+    loadUserDetail(param);
+  } else if (name === "dashboard") {
+    location.hash = "";
+  } else {
+    location.hash = name;
+  }
+}
+
+window.addEventListener("hashchange", () => {
+  const h = location.hash.replace(/^#/, "");
+  if (h.startsWith("user/")) goToView("userDetail", decodeURIComponent(h.slice(5)));
+  else if (h === "scripts") goToView("scripts");
+  else if (h === "settings") goToView("settings");
+  else goToView("dashboard");
+});
+
+/* =====================================================================
+   DASHBOARD
+   ===================================================================== */
+async function loadDashboard() {
+  try {
+    const [stats, users] = await Promise.all([
+      apiGet("/statistics"),
+      apiGet("/users")
+    ]);
+    renderStats(stats);
+    currentUsers = users.users || [];
+    renderUserList();
+  } catch (e) {
+    showToast("Load failed: " + e.message);
+  }
+}
+
+function renderStats(s) {
+  const grid = document.getElementById("statsGrid");
+  grid.innerHTML = `
+    <div class="stat-box active"><div class="stat-num">${s.activeUsers ?? 0}</div><div class="stat-label">Active</div></div>
+    <div class="stat-box"><div class="stat-num">${s.totalUsers ?? 0}</div><div class="stat-label">Total</div></div>
+    <div class="stat-box"><div class="stat-num">${s.expiredUsers ?? 0}</div><div class="stat-label">Expired</div></div>
+    <div class="stat-box risk"><div class="stat-num">${s.riskUsers ?? 0}</div><div class="stat-label">Flagged Risk</div></div>
+  `;
+}
+
+function networkChangeCell(u) {
+  if (!u.pendingAsn) return "—";
+  const windowSeconds = u.suspectedSharing ? 1800 : 10800;
+  const remaining = Math.max(0, Math.floor((u.pendingAsnSince + windowSeconds) - Date.now() / 1000));
+  const mins = Math.floor(remaining / 60);
+  return remaining > 0 ? `⏳ ${mins}m until lock` : "Grace expired";
+}
+
+function renderUserList() {
+  const q = (document.getElementById("userSearch").value || "").toLowerCase();
+  const filtered = currentUsers.filter(u =>
+    !q || (u.username || "").toLowerCase().includes(q) || (u.key || "").toLowerCase().includes(q)
+  );
+  const container = document.getElementById("userListContainer");
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty-state">No users found</div>`;
+    return;
+  }
+  container.innerHTML = filtered.map(u => {
+    const initial = (u.username || "?").charAt(0).toUpperCase();
+    const statusBadge = u.status === "active"
+      ? `<span class="badge active">Active</span>`
+      : `<span class="badge disabled">Disabled</span>`;
+    const riskBadge = u.risk ? `<span class="badge risk">Risk</span>` : "";
+    const lockBadge = u.lock ? `<span class="badge locked">Locked</span>` : "";
+    const sharingBadge = u.suspectedSharing
+      ? `<span class="badge risk" title="${u.weeklyAsnChanges || 0} network changes in 7 days">SHARING?</span>` : "";
+    return `
+      <div class="user-row" onclick="goToView('userDetail','${escapeAttr(u.key)}')">
+        <div class="user-avatar">${initial}</div>
+        <div class="user-row-body">
+          <div class="user-row-name">${escapeHtml(u.username || "(no name)")}</div>
+          <div class="user-row-meta">${statusBadge}${riskBadge}${lockBadge}${sharingBadge}</div>
+        </div>
+        <div class="chevron">›</div>
+      </div>`;
+  }).join("");
+}
+
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function escapeAttr(s) { return String(s).replace(/'/g, "\\'"); }
+function fmtDate(ts) { return ts ? new Date(ts * 1000).toLocaleString() : "—"; }
+
+/* =====================================================================
+   USER DETAIL "PAGE"
+   ===================================================================== */
+async function loadUserDetail(token) {
+  document.getElementById("userDetailBody").innerHTML = `<div class="loading-row"><span class="spinner"></span> Loading…</div>`;
+  try {
+    const data = await apiGet("/user", { id: token });
+    renderUserDetail(token, data.profile, data.security);
+  } catch (e) {
+    document.getElementById("userDetailBody").innerHTML = `<div class="empty-state">${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderUserDetail(token, p, s) {
+  document.getElementById("detailTitle").textContent = p.username || "(no name)";
+  const riskEventsHtml = (s.riskEvents || []).length
+    ? s.riskEvents.map(ev => `
+        <div class="risk-event">
+          <div class="risk-event-reason">${escapeHtml(ev.reason)}</div>
+          <div class="risk-event-meta">${fmtDate(ev.time)} · IP ${escapeHtml(ev.ip || "—")} · ASN ${ev.asn || "—"} · ${escapeHtml(ev.country || "—")}</div>
+        </div>`).join("")
+    : `<div class="empty-state" style="padding:14px;">No risk events</div>`;
+
+  document.getElementById("userDetailBody").innerHTML = `
+    <div class="section-title">Profile</div>
+    <div class="card">
+      <table class="kv-table">
+        <tr><td>Username</td><td>${escapeHtml(p.username || "—")}</td></tr>
+        <tr><td>Status</td><td>${p.status === "active" ? '<span class="badge active">Active</span>' : '<span class="badge disabled">Disabled</span>'}</td></tr>
+        <tr><td>Key (X-Biguu-Key)</td><td style="font-family:monospace;font-size:11px;">${escapeHtml(token)}</td></tr>
+        <tr><td>Expires</td><td>${fmtDate(p.expire)}</td></tr>
+        <tr><td>Created</td><td>${fmtDate(p.created)}</td></tr>
+        <tr><td>Last Seen</td><td>${fmtDate(p.lastSeen)}</td></tr>
+        <tr><td>Allowed Scripts</td><td>${p.scripts ? escapeHtml(p.scripts.join(", ")) : "(defaults)"}</td></tr>
+      </table>
+    </div>
+
+    <div class="section-title">Security</div>
+    <div class="card">
+      <table class="kv-table">
+        <tr><td>Device Claimed</td><td>${s.hasDeviceClaim ? "Yes (HMAC-bound)" : "Not yet — next request claims it"}</td></tr>
+        <tr><td>Device Model</td><td>${escapeHtml(s.uaDevice || "—")}</td></tr>
+        <tr><td>Network (ASN)</td><td>${s.ip1Asn || "—"} (${escapeHtml(s.ip1Country || "—")})</td></tr>
+        <tr><td>Network Change</td><td>${networkChangeCell(s)}</td></tr>
+        <tr><td>Suspected Sharing</td><td>${s.suspectedSharing ? `<span class="badge risk">YES — ${s.weeklyAsnChanges || 0} changes/7d</span>` : "No"}</td></tr>
+        <tr><td>Locked</td><td>${s.lock ? '<span class="badge locked">Locked</span>' : "No"}</td></tr>
+        <tr><td>Risk Flag</td><td>${s.risk ? '<span class="badge risk">Yes</span>' : "No"}</td></tr>
+      </table>
+    </div>
+
+    <div class="section-title">Actions</div>
+    <div class="card">
+      <div class="btn-row">
+        ${p.status === "active"
+          ? `<button class="btn btn-outline" onclick="userAction('/disable','${escapeAttr(token)}')">Disable</button>`
+          : `<button class="btn btn-success" onclick="userAction('/enable','${escapeAttr(token)}')">Enable</button>`}
+        ${s.lock
+          ? `<button class="btn btn-success" onclick="userAction('/unlockuser','${escapeAttr(token)}')">Unlock</button>`
+          : `<button class="btn btn-outline" onclick="userAction('/lockuser','${escapeAttr(token)}')">Lock</button>`}
+      </div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn btn-outline" onclick="userAction('/resetsecurity','${escapeAttr(token)}',false,'asn')">Reset ASN/Network</button>
+        <button class="btn btn-outline" onclick="userAction('/resetsecurity','${escapeAttr(token)}',false,'device')">Reset Device ID</button>
+      </div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn btn-outline" onclick="userAction('/resetsecurity','${escapeAttr(token)}',false,'all')">Reset All Security</button>
+        <button class="btn btn-outline" onclick="openEditUserModal('${escapeAttr(token)}')">Edit</button>
+      </div>
+      <div class="btn-row" style="margin-top:8px;">
+        <button class="btn btn-outline" onclick="openChangeKeyPrompt('${escapeAttr(token)}')">Change Key</button>
+        <button class="btn btn-danger" onclick="userAction('/delete','${escapeAttr(token)}', true)">Delete User</button>
+      </div>
+    </div>
+
+    <div class="section-title">Risk Events</div>
+    ${riskEventsHtml}
+  `;
+}
+
+async function resetAllUsers() {
+  if (!confirm(`Reset security binding for ALL ${currentUsers.length} users? Every device/network claim will be cleared — everyone re-binds on their next request.`)) return;
+  if (!confirm("Really sure? Type OK in the next box to confirm.") || prompt("Type RESET to confirm:") !== "RESET") { showToast("Cancelled"); return; }
+  try {
+    const data = await apiPost("/resetall");
+    showToast(`Reset ${data.count} users`);
+    loadDashboard();
+  } catch (e) { showToast("Failed: " + e.message); }
+}
+async function disableAllUsers() {
+  if (!confirm(`⛔ DISABLE ALL ${currentUsers.length} users? No one will be able to use the service until re-enabled individually.`)) return;
+  if (prompt("Type DISABLE to confirm:") !== "DISABLE") { showToast("Cancelled"); return; }
+  try {
+    const data = await apiPost("/disableall");
+    showToast(`Disabled ${data.count} users`);
+    loadDashboard();
+  } catch (e) { showToast("Failed: " + e.message); }
+}
+
+async function userAction(path, token, confirmFirst, scope) {
+  if (confirmFirst && !confirm("Are you sure? This can't be undone.")) return;
+  try {
+    const params = { id: token };
+    if (scope) params.scope = scope;
+    await apiPost(path, undefined, params);
+    showToast("Done");
+    if (path === "/delete") { goToView("dashboard"); loadDashboard(); }
+    else loadUserDetail(token);
+    loadDashboard();
+  } catch (e) {
+    showToast("Failed: " + e.message);
+  }
+}
+
+function openChangeKeyPrompt(oldToken) {
+  const newToken = prompt("New X-Biguu-Key for this user:");
+  if (!newToken) return;
+  apiPost("/changekey", { oldToken, newToken })
+    .then(() => { showToast("Key changed"); goToView("userDetail", newToken); loadDashboard(); })
+    .catch(e => showToast("Failed: " + e.message));
+}
+
+/* =====================================================================
+   ADD / EDIT USER
+   ===================================================================== */
+let editingToken = null;
+function openAddUserModal() {
+  editingToken = null;
+  document.getElementById("userFormTitle").textContent = "Add User";
+  document.getElementById("formUsername").value = "";
+  document.getElementById("formToken").value = "";
+  document.getElementById("formExpire").value = Math.floor(Date.now() / 1000) + 30 * 86400;
+  document.getElementById("formScripts").value = "";
+  document.getElementById("userFormModal").classList.add("show");
+}
+function openEditUserModal(token) {
+  const u = currentUsers.find(x => x.key === token);
+  editingToken = token;
+  document.getElementById("userFormTitle").textContent = "Edit User";
+  document.getElementById("formUsername").value = u ? u.username : "";
+  document.getElementById("formToken").value = token;
+  document.getElementById("formToken").disabled = true;
+  document.getElementById("formExpire").value = u ? u.expire : "";
+  document.getElementById("formScripts").value = u && u.scripts ? u.scripts.join(", ") : "";
+  document.getElementById("userFormModal").classList.add("show");
+}
+function closeModal(id) { document.getElementById(id).classList.remove("show"); document.getElementById("formToken").disabled = false; }
+
+async function submitUserForm() {
+  const username = document.getElementById("formUsername").value.trim();
+  const token = document.getElementById("formToken").value.trim();
+  const expire = Number(document.getElementById("formExpire").value);
+  const scriptsRaw = document.getElementById("formScripts").value.trim();
+  const scripts = scriptsRaw ? scriptsRaw.split(",").map(s => s.trim()).filter(Boolean) : undefined;
+
+  if (!username || !token || !expire) { showToast("Fill all required fields"); return; }
+
+  try {
+    if (editingToken) {
+      await apiPost("/edituser", { token: editingToken, username, expire, scripts });
+      showToast("User updated");
+    } else {
+      await apiPost("/adduser", { username, token, expire, scripts });
+      showToast("User created");
+    }
+    closeModal("userFormModal");
+    loadDashboard();
+  } catch (e) {
+    showToast("Failed: " + e.message);
+  }
+}
+
+/* =====================================================================
+   SCRIPTS
+   ===================================================================== */
+async function loadScripts() {
+  try {
+    const data = await apiGet("/scripts");
+    const container = document.getElementById("scriptListContainer");
+    if (!data.scripts.length) { container.innerHTML = `<div class="empty-state">No scripts uploaded yet</div>`; return; }
+    container.innerHTML = data.scripts.map(name => `
+      <div class="script-row">
+        <span>${escapeHtml(name)}</span>
+        <div class="btn-row" style="width:auto;">
+          <button class="btn btn-sm btn-outline" onclick="openScriptAccessModal('${escapeAttr(name)}')">Access</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteScript('${escapeAttr(name)}')">Delete</button>
+        </div>
+      </div>`).join("");
+  } catch (e) {
+    document.getElementById("scriptListContainer").innerHTML = `<div class="empty-state">${escapeHtml(e.message)}</div>`;
+  }
+}
+async function deleteScript(id) {
+  if (!confirm(`Delete "${id}"? This can't be undone.`)) return;
+  try { await apiPost("/script/delete", undefined, { id }); showToast("Deleted"); loadScripts(); }
+  catch (e) { showToast("Failed: " + e.message); }
+}
+
+/* ---- Per-script user access control ---- */
+let scriptAccessTarget = null;
+function openScriptAccessModal(scriptName) {
+  scriptAccessTarget = scriptName;
+  document.getElementById("scriptAccessName").textContent = scriptName;
+  const list = document.getElementById("scriptAccessUserList");
+  if (!currentUsers.length) {
+    list.innerHTML = `<div class="empty-state">No users loaded — visit Dashboard first</div>`;
+  } else {
+    list.innerHTML = currentUsers.map(u => {
+      const isDefault = !Array.isArray(u.scripts);
+      const checked = !isDefault && u.scripts.includes(scriptName);
+      return `
+        <label style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--glass-border);">
+          <input type="checkbox" data-token="${escapeAttr(u.key)}" ${checked ? "checked" : ""} ${isDefault ? "disabled" : ""} style="width:18px;height:18px;flex-shrink:0;">
+          <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(u.username || u.key)}</span>
+          ${isDefault ? '<span class="badge disabled">default</span>' : ""}
+        </label>`;
+    }).join("");
+  }
+  document.getElementById("scriptAccessModal").classList.add("show");
+}
+async function saveScriptAccess() {
+  const boxes = document.querySelectorAll('#scriptAccessUserList input[type="checkbox"]:not(:disabled)');
+  const changes = [];
+  boxes.forEach(box => {
+    const token = box.dataset.token;
+    const user = currentUsers.find(u => u.key === token);
+    if (!user || !Array.isArray(user.scripts)) return;
+    const currentlyHas = user.scripts.includes(scriptAccessTarget);
+    if (box.checked !== currentlyHas) {
+      const newScripts = box.checked
+        ? [...user.scripts, scriptAccessTarget]
+        : user.scripts.filter(s => s !== scriptAccessTarget);
+      changes.push({ token, scripts: newScripts });
+    }
+  });
+  if (!changes.length) { showToast("No changes"); closeModal("scriptAccessModal"); return; }
+  try {
+    for (const c of changes) {
+      await apiPost("/edituser", { token: c.token, scripts: c.scripts });
+    }
+    showToast(`Updated ${changes.length} user(s)`);
+    closeModal("scriptAccessModal");
+    loadDashboard();
+  } catch (e) {
+    showToast("Failed: " + e.message);
+  }
+}
+function openUploadScriptModal() {
+  document.getElementById("uploadScriptId").value = "";
+  document.getElementById("uploadScriptContent").value = "";
+  document.getElementById("uploadScriptModal").classList.add("show");
+}
+async function doScriptUpload() {
+  const id = document.getElementById("uploadScriptId").value.trim();
+  const content = document.getElementById("uploadScriptContent").value;
+  if (!id || !content) { showToast("Fill both fields"); return; }
+  try {
+    await apiPostRaw("/script/upload", content, { id });
+    showToast("Uploaded");
+    closeModal("uploadScriptModal");
+    loadScripts();
+  } catch (e) {
+    showToast("Failed: " + e.message);
+  }
+}
+
+/* ---- Legacy script converter (Shadowrocket $response/$request/$done -> input/return) ---- */
+function convertLegacyScript(code) {
+  let out = code;
+  const warnings = [];
+
+  out = out.replace(/\$response\.body/g, "input.body");
+  out = out.replace(/\$request\.body/g, "input.body");
+  out = out.replace(/\$request\.url/g, "input.url");
+  out = out.replace(/\$response\s*\[\s*["']body["']\s*\]/g, "input.body");
+  out = out.replace(/\$request\s*\[\s*["']body["']\s*\]/g, "input.body");
+  out = out.replace(/\$request\s*\[\s*["']url["']\s*\]/g, "input.url");
+
+  if (/\{[^}]*\b(body|url)\b[^}]*\}\s*=\s*\$(response|request)/.test(out)) {
+    warnings.push("Detected destructuring from $response/$request (e.g. `const { body } = $response`). This can't be auto-converted — rewrite manually as `const body = input.body;`.");
+  }
+
+  out = out.replace(/\$persistentStore\.read\(\s*["']LAST_APP_UA["']\s*\)/g, "input.appUA");
+  if (/\$persistentStore/.test(out)) {
+    warnings.push("Detected $persistentStore usage beyond LAST_APP_UA. There's no server-side equivalent — that logic needs to move into the relay shell (buildRelayShell in scriptserver_worker.js) as a new input.* field.");
+  }
+
+  if (/\$response\.headers|\$request\.headers/.test(out)) {
+    warnings.push("Detected $response.headers / $request.headers. The relay shell only forwards { body, url, appUA } today.");
+  }
+
+  const doneMatches = out.match(/\$done\s*\(/g);
+  if (doneMatches && doneMatches.length > 1) {
+    warnings.push(`Found ${doneMatches.length} separate $done() calls. Auto-convert produces a return for each — if this script has multiple exit branches, check the logic carefully.`);
+  }
+
+  out = out.replace(/\$done\s*\(\s*\{\s*body\s*:\s*([\s\S]*?)\s*\}\s*\)\s*;?/g, "return $1;");
+  out = out.replace(/\$done\s*\(\s*\{\s*body\s*\}\s*\)\s*;?/g, "return body;");
+  if (/\$done\s*\(\s*\{\s*[a-zA-Z_$][\w$]*\s*\}\s*\)/.test(out)) {
+    warnings.push("Detected a shorthand $done({ someVariable }) call where the variable isn't named `body`. Rewrite manually as `return someVariable;`.");
+  }
+  out = out.replace(/\$done\s*\(\s*\{\s*\}\s*\)\s*;?/g, 'return "";');
+
+  return { code: out, warnings };
+}
+
+function openLegacyConvertModal() {
+  document.getElementById("legacyScriptInput").value = "";
+  document.getElementById("legacyWarnings").innerHTML = "";
+  document.getElementById("convertedScript").style.display = "none";
+  document.getElementById("convertedLabel").style.display = "none";
+  document.getElementById("convertedIdLabel").style.display = "none";
+  document.getElementById("convertedScriptId").style.display = "none";
+  document.getElementById("uploadConvertedBtn").style.display = "none";
+  document.getElementById("legacyConvertModal").classList.add("show");
+}
+function runLegacyConvert() {
+  const input = document.getElementById("legacyScriptInput").value;
+  if (!input.trim()) { showToast("Paste a script first"); return; }
+  const { code, warnings } = convertLegacyScript(input);
+  document.getElementById("legacyWarnings").innerHTML = warnings.map(w => `<div class="warn-box">⚠ ${escapeHtml(w)}</div>`).join("");
+  document.getElementById("convertedScript").value = code;
+  document.getElementById("convertedScript").style.display = "block";
+  document.getElementById("convertedLabel").style.display = "block";
+  document.getElementById("convertedIdLabel").style.display = "block";
+  document.getElementById("convertedScriptId").style.display = "block";
+  document.getElementById("uploadConvertedBtn").style.display = "inline-flex";
+}
+async function uploadConvertedScript() {
+  const id = document.getElementById("convertedScriptId").value.trim();
+  const content = document.getElementById("convertedScript").value;
+  if (!id) { showToast("Enter a script ID"); return; }
+  try {
+    await apiPostRaw("/script/upload", content, { id });
+    showToast("Uploaded");
+    closeModal("legacyConvertModal");
+    loadScripts();
+  } catch (e) {
+    showToast("Failed: " + e.message);
+  }
+}
+
+/* =====================================================================
+   SETTINGS
+   ===================================================================== */
+async function loadSettingsIntoForm() {
+  try {
+    const data = await apiGet("/settings");
+    document.getElementById("settingsPanelName").value = data.settings.panelName || "";
+    document.getElementById("settingsDefaultExpire").value = data.settings.defaultExpireDays || 30;
+  } catch (e) { /* non-fatal */ }
+}
+async function saveSettings() {
+  try {
+    await apiPost("/settings", {
+      panelName: document.getElementById("settingsPanelName").value,
+      defaultExpireDays: Number(document.getElementById("settingsDefaultExpire").value)
+    });
+    showToast("Settings saved");
+  } catch (e) { showToast("Failed: " + e.message); }
+}
+async function downloadBackup() {
+  try {
+    const data = await apiGet("/backup");
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "biguudev-backup-" + Date.now() + ".json";
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) { showToast("Failed: " + e.message); }
+}
+
+/* =====================================================================
+   INIT
+   ===================================================================== */
+(function init() {
+  if (isAuthenticated()) {
+    document.getElementById("loginGate").style.display = "none";
+    document.getElementById("appShell").style.display = "block";
+    loadDashboard();
+    loadScripts();
+    loadSettingsIntoForm();
+  }
+  const h = location.hash.replace(/^#/, "");
+  if (h.startsWith("user/")) { /* handled after auth via loadUserDetail on demand */ }
+})();
+</script>
+</body>
+</html>
